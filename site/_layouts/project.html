@@ -1,0 +1,178 @@
+---
+layout: default
+---
+<article class="project-detail">
+  <header class="project-hero reveal">
+    <div class="project-hero-intro">
+      <p class="eyebrow">{{ page.category }}</p>
+      <h1>{{ page.title }}</h1>
+      <p class="lead">{{ page.subtitle }}</p>
+    </div>
+
+    <figure class="project-cover project-banner spotlight-card">
+      {% if page.cover_type == "video" %}
+        <video autoplay muted loop playsinline controls preload="auto" disablepictureinpicture disableremoteplayback>
+          <source src="{{ page.cover | relative_url }}" type="video/mp4">
+        </video>
+      {% else %}
+        <img src="{{ page.cover | relative_url }}" alt="{{ page.title }} preview" loading="eager">
+      {% endif %}
+    </figure>
+
+    <dl class="project-meta-bar">
+      <div class="pm-item"><dt>Timeline</dt><dd>{{ page.date_range }}</dd></div>
+      <div class="pm-item"><dt>Context</dt><dd>{{ page.partners }}</dd></div>
+      <div class="pm-item"><dt>Role</dt><dd>{{ page.role }}</dd></div>
+      <div class="pm-item"><dt>Stage</dt><dd>{{ page.stage }}</dd></div>
+    </dl>
+  </header>
+
+  <div class="project-body" data-proj-shell>
+    <aside class="proj-toc" data-proj-toc aria-label="On this page">
+      <button class="proj-toc-toggle" type="button" data-toc-toggle aria-expanded="true" aria-label="Toggle contents">
+        <span class="toc-title">Contents</span>
+        <svg class="toc-chevron" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <nav class="proj-toc-nav"><ol data-toc-list></ol></nav>
+    </aside>
+
+    <div class="project-body-main">
+
+  <section class="section reveal">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Overview</p>
+        <h2>What is this project about?</h2>
+      </div>
+    </div>
+    <p class="large-text">{{ page.summary }}</p>
+    {% if page.tags %}
+    <div class="tag-row project-tags">
+      {% for tag in page.tags %}
+        <span class="tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </section>
+
+  {% if page.contributions %}
+  <section class="section reveal">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">My Work</p>
+        <h2>Core contributions</h2>
+      </div>
+    </div>
+    <div class="contribution-grid reveal-stagger">
+      {% for item in page.contributions %}
+        <div class="mini-card spotlight-card">
+          <span class="index">{{ forloop.index | prepend: "0" }}</span>
+          <p>{{ item }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if page.gallery %}
+  <section class="section reveal">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Media</p>
+        <h2>Selected visual evidence</h2>
+      </div>
+    </div>
+    <div class="media-gallery reveal-stagger">
+      {% for media in page.gallery %}
+        <figure class="gallery-item spotlight-card">
+          {% if media.type == "video" %}
+            <video autoplay muted loop playsinline controls preload="metadata" disablepictureinpicture disableremoteplayback>
+              <source src="{{ media.src | relative_url }}" type="video/mp4">
+            </video>
+          {% else %}
+            <img src="{{ media.src | relative_url }}" alt="{{ media.caption }}" loading="lazy">
+          {% endif %}
+          <figcaption>{{ media.caption }}</figcaption>
+        </figure>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="section reveal {% unless page.rich_body %}prose{% endunless %}">
+    {{ content }}
+  </section>
+
+  {% if page.privacy_note %}
+  <section class="section reveal">
+    <div class="privacy-note">
+      <strong>Confidentiality note.</strong>
+      <span>{{ page.privacy_note }}</span>
+    </div>
+  </section>
+  {% endif %}
+
+  {% assign all_projects = site.projects | sort: "order" | reverse %}
+  {% assign project_total = all_projects | size %}
+  {% assign cur_index = 0 %}
+  {% for p in all_projects %}
+    {% if p.url == page.url %}{% assign cur_index = forloop.index0 %}{% endif %}
+  {% endfor %}
+  {% assign prev_index = cur_index | minus: 1 %}
+  {% assign next_index = cur_index | plus: 1 %}
+  {% if prev_index < 0 %}{% assign prev_index = project_total | minus: 1 %}{% endif %}
+  {% if next_index >= project_total %}{% assign next_index = 0 %}{% endif %}
+  {% assign prev_project = all_projects[prev_index] %}
+  {% assign next_project = all_projects[next_index] %}
+
+  <nav class="project-nav reveal" aria-label="Project navigation">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Keep exploring</p>
+        <h2>Jump to another project</h2>
+      </div>
+      <a class="tiny-link" href="{{ '/projects/' | relative_url }}">All projects</a>
+    </div>
+
+    <div class="project-nav-grid">
+      <a class="project-nav-card prev" href="{{ prev_project.url | relative_url }}">
+        <span class="dir">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Previous
+        </span>
+        <span class="t">{{ prev_project.title }}</span>
+        <small>{{ prev_project.category }} · {{ prev_project.date_range }}</small>
+      </a>
+      <a class="project-nav-card next" href="{{ next_project.url | relative_url }}">
+        <span class="dir">
+          Next
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+        <span class="t">{{ next_project.title }}</span>
+        <small>{{ next_project.category }} · {{ next_project.date_range }}</small>
+      </a>
+    </div>
+
+    <div class="more-projects">
+      <div class="more-strip reveal-stagger">
+        {% for p in all_projects %}
+          <a class="more-chip {% if p.url == page.url %}is-current{% endif %}" href="{{ p.url | relative_url }}"{% if p.url == page.url %} aria-current="page"{% endif %}>
+            <span class="thumb">
+              {% if p.cover_type == "video" %}
+                <video muted playsinline preload="metadata" tabindex="-1"><source src="{{ p.cover | relative_url }}" type="video/mp4"></video>
+              {% else %}
+                <img src="{{ p.cover | relative_url }}" alt="" loading="lazy">
+              {% endif %}
+            </span>
+            <span class="mc-body">
+              <span class="mc-title">{{ p.title }}</span>
+              <span class="mc-meta">{{ p.date_range }}</span>
+            </span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </nav>
+  </div>
+  </div>
+</article>

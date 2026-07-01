@@ -1,0 +1,31 @@
+---
+layout: default
+title: "News"
+description: "Latest news, papers, talks, and research updates from Jiang Chaokang."
+---
+<header class="page-title reveal">
+  <p class="eyebrow">News</p>
+  <h1>Latest research and engineering updates.</h1>
+  <p class="lead">
+    A lightweight timeline for papers, talks, releases, and long-term milestones.
+  </p>
+</header>
+
+<section class="news-list">
+  {% for item in site.data.news %}
+    <article class="news-card reveal">
+      <time datetime="{{ item.date }}">{{ item.display_date | default: item.date }}</time>
+      <h2>{{ item.title }}</h2>
+      {% if item.description %}
+        <p>{{ item.description }}</p>
+      {% endif %}
+      {% if item.links %}
+        <div class="link-row">
+          {% for link in item.links %}
+            <a class="tiny-link" href="{{ link.url }}" {% if link.external %}target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </article>
+  {% endfor %}
+</section>

@@ -1,0 +1,52 @@
+---
+layout: default
+title: "Blog"
+description: "Long-term notes and recorded talks by Jiang Chaokang on world models, generative driving, embodied AI, 3D reconstruction, and engineering practice."
+hide_news: true
+---
+<header class="page-title reveal">
+  <p class="eyebrow">Blog</p>
+  <h1>Notes &amp; talks.</h1>
+  <p class="lead">
+    Durable notes and recorded walkthroughs — organized by topic. Each card is marked
+    <span class="kind-ref kind-note">Note</span> for written pieces or
+    <span class="kind-ref kind-talk">Talk</span> for video explainers.
+  </p>
+</header>
+
+<div class="filter-bar reveal" data-filter-group="blog" aria-label="Filter posts by topic">
+  <button class="filter-button is-active" type="button" data-filter="all">All</button>
+  {% for c in site.data.blog_categories %}
+    <button class="filter-button" type="button" data-filter="{{ c.slug }}">{{ c.label }}</button>
+  {% endfor %}
+</div>
+
+<section class="post-grid" data-filter-list="blog">
+  {% for post in site.posts %}
+    {% assign cat = site.data.blog_categories | where: "slug", post.category | first %}
+    {% if post.talk %}{% assign kind = "talk" %}{% else %}{% assign kind = "note" %}{% endif %}
+    <article class="post-card reveal" data-tags="{{ post.category }} {{ kind }}" data-accent="{{ cat.accent | default: 'accent' }}">
+      <a class="post-card-media" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
+        {% if post.cover_type == "video" %}
+          <video autoplay muted loop playsinline preload="metadata"{% if post.poster %} poster="{{ post.poster | relative_url }}"{% endif %}>
+            <source src="{{ post.cover | relative_url }}" type="video/mp4">
+          </video>
+        {% elsif post.cover %}
+          <img src="{{ post.cover | relative_url }}" alt="" loading="lazy">
+        {% else %}
+          <span class="post-glyph">◆</span>
+        {% endif %}
+        <span class="post-kind kind-{{ kind }}">{% if post.talk %}Talk{% else %}Note{% endif %}</span>
+        {% if post.talk %}<span class="post-play"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>{% endif %}
+      </a>
+      <div class="post-card-body">
+        <div class="post-card-top">
+          <span class="post-cat">{{ cat.label | default: "Notes" }}</span>
+          <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+        </div>
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        {% if post.description %}<p>{{ post.description | strip_html | truncate: 132 }}</p>{% endif %}
+      </div>
+    </article>
+  {% endfor %}
+</section>

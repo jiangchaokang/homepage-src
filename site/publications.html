@@ -1,0 +1,83 @@
+---
+layout: default
+title: "Publications"
+description: "Publications by Jiang Chaokang across world models, 3D/4D perception, scene flow, LiDAR odometry, and autonomous driving."
+hide_news: true
+---
+<header class="page-title reveal">
+  <p class="eyebrow">Publications</p>
+  <h1>Research with visual evidence.</h1>
+  <p class="lead">
+    My research centers on <strong>generative world models</strong>, scene flow, LiDAR odometry,
+    3D/4D perception, and end-to-end driving. Looking ahead, I am building toward
+    closed-loop simulation that couples reconstruction with one-step generation,
+    streaming generation, and one-step video / image synthesis.
+  </p>
+  <ul class="direction-chips" aria-label="Research directions">
+    <li>Generative World Models</li>
+    <li>Scene Flow</li>
+    <li>LiDAR Odometry</li>
+    <li>3D / 4D Perception</li>
+    <li>End-to-End Driving</li>
+  </ul>
+</header>
+
+<div class="filter-bar reveal" data-filter-group="publications" aria-label="Publication filters">
+  <button class="filter-button is-active" type="button" data-filter="all">All</button>
+  <button class="filter-button" type="button" data-filter="world-model">World Models</button>
+  <button class="filter-button" type="button" data-filter="generative">Generative</button>
+  <button class="filter-button" type="button" data-filter="scene-flow">Scene Flow</button>
+  <button class="filter-button" type="button" data-filter="lidar-odometry">LiDAR Odometry</button>
+  <button class="filter-button" type="button" data-filter="perception">Perception</button>
+  <button class="filter-button" type="button" data-filter="e2e">E2E Driving</button>
+</div>
+
+<section class="pub-list" data-filter-list="publications">
+  {% for pub in site.data.publications %}
+    {% assign venue_class = pub.venue_short | downcase | replace: " ", "-" %}
+    {% assign media_ext = pub.media | split: "." | last | downcase %}
+    <article class="pub-card reveal" id="{{ pub.id }}" data-tags="{{ pub.tags | join: ' ' }}">
+      <div class="pub-media">
+        {% if media_ext == "mp4" or media_ext == "webm" %}
+          <video autoplay muted loop playsinline preload="metadata">
+            <source src="{{ pub.media | relative_url }}" type="video/mp4">
+          </video>
+        {% else %}
+          <img src="{{ pub.media | relative_url }}" alt="{{ pub.title }} preview" loading="lazy">
+        {% endif %}
+      </div>
+
+      <div class="pub-body">
+        <div class="pub-topline">
+          <span class="venue-mark venue-{{ venue_class }}">{{ pub.venue_short }}</span>
+          <span class="status-pill">{{ pub.status }}</span>
+          <span class="org-pill">{{ pub.year }}</span>
+        </div>
+
+        <h2>{{ pub.title }}</h2>
+
+        <p class="pub-authors">
+          {{ pub.authors | replace: "Chaokang Jiang", "<strong>Chaokang Jiang</strong>" }}
+        </p>
+
+        {% if pub.institutions %}
+          <div class="org-row">
+            {% for org in pub.institutions %}
+              <span class="org-pill">{{ org }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <p class="pub-summary">{{ pub.summary }}</p>
+        <p class="pub-contribution"><strong>Contribution.</strong> {{ pub.contribution }}</p>
+
+        <div class="link-row">
+          {% for link in pub.links %}
+            <a class="tiny-link" href="{{ link.url }}" {% if link.external %}target="_blank" rel="noopener"{% endif %}>{{ link.label }}</a>
+          {% endfor %}
+          <a class="tiny-link" href="{{ '/assets/bib/papers.bib' | relative_url }}">BibTeX</a>
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+</section>

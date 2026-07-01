@@ -1,0 +1,20 @@
+# Primary blog taxonomy. One slug per post (front matter `category:`).
+# Notes vs talks are NOT separate categories — that is shown as a badge.
+- slug: world-models
+  label: World Models
+  accent: cyan
+- slug: embodied-ai
+  label: Embodied AI
+  accent: green
+- slug: autonomous-driving
+  label: Autonomous Driving
+  accent: accent
+- slug: scene-reconstruction
+  label: Scene Reconstruction
+  accent: warn
+- slug: generative-models
+  label: Generative Models
+  accent: purple
+- slug: ai-tools
+  label: AI Tools
+  accent: purple

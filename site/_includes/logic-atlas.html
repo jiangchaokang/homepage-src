@@ -1,0 +1,70 @@
+{%- comment -%}
+  Logic Atlas — interactive 2.5D logic map for project pages.
+  Reads `include.atlas` (or page.atlas): { title, caption, cols, nodes[], edges[] }.
+  Node: { id, col, row, span, kind, accent, title, tag, desc, receives, logic, sends, gives, media, media_type }
+  Edge: { from, to, kind(flow|solid|dashed), label }
+  Pure SVG + CSS + JS, no dependencies. Progressive: nodes render without JS; edges + tour are enhancement.
+{%- endcomment -%}
+{%- assign atlas = include.atlas | default: page.atlas -%}
+{%- if atlas -%}
+<section class="atlas reveal{% if atlas.variant %} is-{{ atlas.variant }}{% endif %}" data-atlas{% if atlas.cols %} style="--atlas-cols: {{ atlas.cols }}"{% endif %} aria-label="Interactive logic map">
+  <div class="atlas-bar">
+    <div class="atlas-bar-head">
+      {% if atlas.eyebrow %}<p class="eyebrow">{{ atlas.eyebrow }}</p>{% endif %}
+      {% if atlas.title %}<h2>{{ atlas.title }}</h2>{% endif %}
+      {% if atlas.caption %}<p class="atlas-caption">{{ atlas.caption }}</p>{% endif %}
+    </div>
+    <div class="atlas-tour" data-atlas-tour hidden>
+      <button class="atlas-tour-btn" type="button" data-atlas-toggle aria-label="Toggle auto tour">
+        <svg class="ico-play" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="ico-pause" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+        <span data-atlas-status>Auto&nbsp;Tour</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="atlas-stage" data-atlas-stage>
+    <div class="atlas-scene" data-atlas-scene>
+    <svg class="atlas-edges" data-atlas-edges aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="atlas-grid" data-atlas-grid>
+      {% for n in atlas.nodes %}
+        <button class="atlas-node acc-{{ n.accent | default: 'cyan' }} kind-{{ n.kind | default: 'process' }}{% if forloop.first %} is-start{% endif %}{% if n.pulse %} is-pulse{% endif %}"
+                type="button"
+                data-node="{{ n.id }}"
+                style="grid-column: {{ n.col | default: forloop.index }} / span {{ n.span | default: 1 }}; grid-row: {{ n.row | default: 1 }};">
+          {% if n.tag %}<span class="node-tag">{{ n.tag }}</span>{% endif %}
+          <span class="node-title">{{ n.title }}</span>
+          {% if n.desc %}<span class="node-desc">{{ n.desc }}</span>{% endif %}
+          {% if n.score %}<span class="node-score" aria-hidden="true">{% for s in n.score %}<span class="ns-bar" style="height: {{ s }}%"></span>{% endfor %}</span>{% endif %}
+          <span class="node-spark" aria-hidden="true"></span>
+        </button>
+      {% endfor %}
+    </div>
+    </div>
+  </div>
+
+  <aside class="atlas-panel" data-atlas-panel aria-live="polite">
+    <div class="ap-head">
+      <span class="ap-dot" data-ap-dot></span>
+      <div>
+        <p class="ap-tag" data-ap-tag>Logic map</p>
+        <h3 class="ap-title" data-ap-title>{{ atlas.caption | default: 'Hover or focus a node' }}</h3>
+      </div>
+    </div>
+    <dl class="ap-io" data-ap-io>
+      <div class="ap-row"><dt>Input</dt><dd data-ap-receives>—</dd></div>
+      <div class="ap-row"><dt>Logic</dt><dd data-ap-logic>—</dd></div>
+      <div class="ap-row"><dt>Output</dt><dd data-ap-sends>—</dd></div>
+      <div class="ap-row ap-give"><dt>Gives</dt><dd data-ap-gives>—</dd></div>
+    </dl>
+    <div class="ap-rel" data-ap-rel hidden>
+      <span class="ap-rel-group" data-ap-up hidden><b>Upstream</b><span></span></span>
+      <span class="ap-rel-group" data-ap-down hidden><b>Downstream</b><span></span></span>
+    </div>
+    <p class="ap-note" data-ap-note hidden></p>
+    <figure class="ap-media" data-ap-media hidden></figure>
+  </aside>
+
+  <script type="application/json" data-atlas-data>{{ atlas | jsonify }}</script>
+</section>
+{%- endif -%}

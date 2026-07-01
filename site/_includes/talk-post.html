@@ -1,0 +1,32 @@
+{%- comment -%}
+  Talk post — one explainer video per page. Reads page front matter:
+  title, description, eyebrow, byline, duration, slides, video, poster, takeaways[], note.
+  Single big controllable player (sound preserved), scroll-aware via .talk-video.
+{%- endcomment -%}
+<article class="talk reveal">
+  <header class="talk-hero">
+    <p class="eyebrow">{{ page.eyebrow | default: "Video walkthrough · Talk" }}</p>
+    <h1>{{ page.title }}</h1>
+    {% if page.byline or page.description %}<p class="talk-byline">{{ page.byline | default: page.description }}</p>{% endif %}
+    <div class="talk-meta">
+      <span class="talk-chip"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>{{ page.duration | default: "Talk" }}</span>
+      {% if page.slides %}<span class="talk-chip">{{ page.slides }} slides</span>{% endif %}
+      <span class="talk-chip">{{ page.date | date: "%b %-d, %Y" }}</span>
+    </div>
+  </header>
+
+  <figure class="talk-stage">
+    <video class="talk-video" controls preload="none" playsinline poster="{{ page.poster | relative_url }}" disablepictureinpicture>
+      <source src="{{ page.video | relative_url }}" type="video/mp4">
+    </video>
+  </figure>
+
+  {% if page.takeaways %}
+  <section class="bx-section">
+    <h2>What the talk covers</h2>
+    <ul class="bx-takeaways">
+      {% for point in page.takeaways %}<li>{{ point }}</li>{% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>

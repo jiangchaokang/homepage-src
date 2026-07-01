@@ -1,0 +1,59 @@
+---
+layout: default
+title: "Projects"
+description: "Engineering projects by Jiang Chaokang, including autonomous driving, 3D/4D auto-labeling, robotics, scene flow deployment, road preview, and generative world models."
+hide_news: true
+---
+<header class="page-title reveal">
+  <p class="eyebrow">Projects</p>
+  <h1>Production, POC, and research engineering.</h1>
+  <p class="lead">
+    Projects are maintained as independent pages. Public descriptions are intentionally high-level
+    and sanitized for enterprise confidentiality.
+  </p>
+</header>
+
+<div class="filter-bar reveal" data-filter-group="projects" aria-label="Project filters">
+  <button class="filter-button is-active" type="button" data-filter="all">All</button>
+  <button class="filter-button" type="button" data-filter="production">Production</button>
+  <button class="filter-button" type="button" data-filter="research">Research</button>
+  <button class="filter-button" type="button" data-filter="world-model">World Models</button>
+  <button class="filter-button" type="button" data-filter="3d-4d">3D/4D</button>
+  <button class="filter-button" type="button" data-filter="robotics">Robotics</button>
+  <button class="filter-button" type="button" data-filter="e2e">E2E</button>
+  <button class="filter-button" type="button" data-filter="deployment">Deployment</button>
+</div>
+
+<section class="project-list" data-filter-list="projects">
+  {% assign sorted_projects = site.projects | sort: "order" | reverse %}
+  {% for project in sorted_projects %}
+    <article class="project-card reveal" data-tags="{{ project.tags | join: ' ' }}">
+      <div class="project-media">
+        {% if project.cover_type == "video" %}
+          <video autoplay muted loop playsinline preload="metadata">
+            <source src="{{ project.cover | relative_url }}" type="video/mp4">
+          </video>
+        {% else %}
+          <img src="{{ project.cover | relative_url }}" alt="{{ project.title }} preview" loading="lazy">
+        {% endif %}
+      </div>
+
+      <div class="project-body">
+        <div class="project-topline">
+          <span class="status-pill">{{ project.category }}</span>
+          <span class="org-pill">{{ project.date_range }}</span>
+        </div>
+
+        <h2><a class="card-link" href="{{ project.url | relative_url }}">{{ project.title }}</a></h2>
+        <p class="project-meta">{{ project.partners }} · {{ project.role }}</p>
+        <p class="project-summary">{{ project.summary }}</p>
+
+        <div class="tag-row">
+          {% for tag in project.tags limit:5 %}
+            <span class="tag">{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </article>
+  {% endfor %}
+</section>

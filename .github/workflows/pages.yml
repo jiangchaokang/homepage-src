@@ -1,0 +1,69 @@
+name: Deploy site to GitHub Pages
+
+# OPTION A — single repository, deployed with the "GitHub Actions" Pages source.
+# Use this when THIS repo is the published Pages repo `jiangchaokang.github.io`
+# (public on the Free plan, or private on GitHub Pro/Team).
+# The Jekyll source lives in `site/`, so the default branch-build cannot be used.
+# One-time setup: Settings → Pages → Build and deployment → Source: "GitHub Actions".
+#
+# If you instead keep the SOURCE private and publish only the built `_site` to a
+# separate public repo, use `deploy.yml` (Option B) — you may delete this file.
+# The `if:` guards below keep this workflow inert unless it runs inside the public
+# user-site repo, so it never fails in a private source repo.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; let in-progress production deploys finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: ${{ github.repository == 'jiangchaokang/jiangchaokang.github.io' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+          working-directory: site
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - id: pages
+        uses: actions/configure-pages@v5
+      - run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+      # Encrypt company-internal project pages (protected: true) before publishing.
+      - name: Encrypt protected project pages
+        run: node tools/encrypt-projects.js
+        env:
+          SITE_PROTECT_PASSWORD: ${{ secrets.SITE_PROTECT_PASSWORD || '5896' }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/_site
+
+  deploy:
+    if: ${{ github.repository == 'jiangchaokang/jiangchaokang.github.io' }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

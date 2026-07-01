@@ -1,0 +1,82 @@
+% !TEX program = xelatex
+\documentclass[10pt]{article}
+\usepackage{resume}
+
+\begin{document}
+\pagedecoration
+\zihao{-5}
+
+% ===== 个人信息（无标题，直接姓名 + 信息；证件照置于右上角）=====
+\headerphoto{photo.jpg}
+\noindent
+\begin{minipage}[t]{\dimexpr\linewidth-\PhotoColW-0.4cm\relax}
+\vspace{0pt}
+{\NameZihao\bfseries\color{themeblue}蒋超康}\hspace{0.7em}{\small\tlink{https://jiangchaokang.github.io}{Homepage}\,$\cdot$\,\tlink{https://scholar.google.com/citations?user=6gZ8vloAAAAJ}{Scholar}}\\[\NameGap]
+{\small\infoitem{\faPhone}{17798817596}\hfill\infoitem{\faEnvelope}{jck98@foxmail.com}\hfill\infoitem{\faBirthdayCake}{1998.01}\hfill\infoitem{\faBriefcase}{World Model 算法}}
+\end{minipage}
+
+% ===== 教育背景 =====
+\cvsection{\faGraduationCap}{教育背景\,{\zihao{6}（Highest Education Only）}}
+\entry{2020.09\dto2023.06}{硕士$\cdot$控制科学与工程$\cdot$上海交大 \&\ 矿大联合培养 \quad 导师: 王贺升（浦江国际院长）、缪燕子 \quad \quad \tlink{https://irmv.sjtu.edu.cn/cn}{IRMV Lab}}{}
+
+% ===== 工作经历 =====
+\cvsection{\faPenNib}{工作经历\,{\zihao{6}（Work Experience）}}
+\workentry{2023.06\dto2025.03}{智驾感知算法}{鉴智机器人 (Phigent Robotics)}{海淀，北京}
+\workentry{2025.03\dto\textit{Present}}{世界模型算法(Group 内2025年度绩效第一)}{博世中国 (Bosch XC-CN)}{长宁，上海}
+
+% ===== 项目经历 =====
+\cvsection{\faBriefcase}{项目经历\,{\zihao{6}（Project Experience）}}
+
+\project{生成式自动驾驶闭环仿真平台~\weblink{https://jiangchaokang.github.io/projects/generative-ad-simulation-platform/}}{博世中国\,$\cdot$\,2026.01\dto\textit{Present}}
+\projbody{%
+    \pn{1} 主导 7V 环视视频生成全链路研发（Map → WorldSim → 7V Video Gen），distillation 推理加速 13.9×；\\
+    \pn{2} 基于 OmniDream 实现三阶段渐进式训练策略：\textcircled{1} Bidirectional Teacher 建立全局时序理解 → \textcircled{2} Causal Student 适配自回归推理范式 → \textcircled{3} Distillation + Self-Forcing Student 实现流式生成；是业内首个 7V 环视视频 real-time streaming 生成；\\
+    \pn{3} 设计 SmartAgent × 矢量世界模型联合视频生成框架，构建语义可控、闭环反馈的自动驾驶仿真链路。%
+}
+
+\project{两段式/一段式智驾感知算法功能迭代~\weblink{https://jiangchaokang.github.io/projects/j6m-static-dynamic-perception/}}{博世中国\,$\cdot$\,2025.03\dto2025.12}
+\projbody{%
+    \pn{1}主导静态感知 OneModel 从零构建与持续迭代（Features 2→8：{\zihao{6}laneboundary / roadedge → roadmarker / centerline / goalpoint / GRE / freespace / drivepath}），优化 Training \& Inference 框架（加速和精度）并构建 Evaluation 框架，落地为 3 款量产车型 Platform Model，同时维护静态数据闭环与处理链路，累计发版(Major Versions) 20+。\\
+    \pn{2}一段式项目中实现 DYO\,\&\,Static 二网合一感知 OneModel 并训练发版；
+    \pn{3}负责动态模型量化与 Mono3D 的迭代发版。
+}
+
+\project{预研可控环视视频生成大模型~\weblink{https://jiangchaokang.github.io/projects/phigent-gen-model/}}{鉴智机器人\,$\cdot$\,2024.07\dto2025.03}
+\projbody{%
+    \pn{1} 基于 MagicDrive 构建内部环视数据可控生成与编辑 pipeline，支持 4-Fisheye / 7V / 11V 生成；\\
+    \pn{2} 基于 OpenSora-STDiT × MagicDrive 迭代多模态可控环视视频生成框架，统一支持 text / layout 条件控制、多 View / 多分辨率 / 可变时长，实现 241 帧+ 长时序稳定生成；在内部产线验证锥桶线生成与大车替换场景的有效性。%
+}
+
+\project{智驾感知/数据生产算法优化 \& Sparse 一段式端到端 PoC~\weblink{https://jiangchaokang.github.io/projects/auto-labeling-4d-lidar/}}{鉴智机器人\,$\cdot$\,2024.02\dto2024.08}
+\projbody{%
+    \pn{1} AutoLabelling：迭代基于 BEVFusion 的动态自动标注框架，针对性提升 VRU 标注精度与远距目标 recall；\\
+    \pn{2} 感知工具链：优化多传感器标定质检工具，迭代纯 LiDAR 3D 检测效率，保障数据与模型质量；\\
+    \pn{3} 在 J6E / Orin 上研发 Pillar 3D 速度流估计模型，设计高精度 scene-flow 自动标注 pipeline 及点云时序预测框架；\\
+    \pn{4}支持 11V 环视 Camera × LiDAR Sparse BEV Fusion 方案设计和实现，维护融合推理 CUDA 算子（Fused CUDA ops）。%
+}
+
+\project{双目路面预瞄魔毯量产（云辇系统）~\weblink{https://jiangchaokang.github.io/projects/road-preview-disparity/}}{鉴智机器人\,$\cdot$\,2023.06\dto2024.04}
+\projbody{%
+    \pn{1}在 TDA4、地平线 J5/J6E、NVIDIA Orin 四平台开发部署路面分割模型（浮点 + QAT 训练），持续平衡精度与效率并已量产；分割数据由 5W 迭代至 \textbf{23W+}，累计发版 20 余次；
+    \pn{2}并行预研并优化双目深度估计浮点模型。
+}
+
+\project{更多项目（详见\tlink{https://jiangchaokang.github.io/projects/}{项目主页}，部分内容已加密：5896）}{}
+\projbody{自主割草机器人感知（Positec）、离线纯视觉4D AutoLabeling 系统等。}
+
+% ===== 学术成果 =====
+\cvsection{\faBookOpen}{学术成果\,{\zihao{6}（Academic Achievement）}}
+\begin{itemize}
+\item \textbf{发表论文十余篇}，覆盖 ICML(Spotlight)、NeurIPS、CVPR、ICCV、AAAI 及顶刊 T-PAMI、TII、TIM、TITS、AIS 等。
+\item \textbf{VectorWorld}（\textbf{ICML 2026 Spotlight}）~\ghlink{https://github.com/jiangchaokang/VectorWorld}\ 设计自动驾驶流式矢量世界模型，精度与效率双 SOTA。
+\item \textbf{3DSFLabelling}（\textbf{CVPR 2024}）~\ghlink{https://github.com/jiangchaokang/3DSFLabelling}\ 提出超高精度 3D 运动流自动标注与增强框架，大幅提升动态感知，达到 SOTA。
+\item \textbf{NeuroGauss4D-PCI}（\textbf{NeurIPS 2024}）~\ghlink{https://github.com/jiangchaokang/NeuroGauss4D-PCI}\ 为点云插帧/预测引入 4D 神经场与 4D 高斯变形场，提升预测精度。
+\item \textbf{Pseudo-LiDAR 场景流}（\textbf{TII}，一区Top）~\ghlink{https://github.com/IRMVLab/3DSF-PL}\ 首次纯视觉实现 3D 场景流估计，设计深度一致性 loss，桥接图像与点云运动。
+\item \textbf{其他}：\blink{https://doi.org/10.1109/TPAMI.2025.3629570}{DifFlow3D(CVPR'24/T-PAMI)}、\blink{https://doi.org/10.1109/CVPR52734.2025.01642}{Mamba4D(CVPR'25)}、\blink{https://doi.org/10.1109/ICCV51070.2023.00776}{RegFormer(ICCV'23)}、\blink{https://doi.org/10.1609/aaai.v37i2.25256}{TransLO(AAAI'23)}、\blink{https://doi.org/10.1109/TIM.2023.3315416}{Pseudo-LiDAR 里程计(TIM'23)}、\blink{https://doi.org/10.1002/aisy.202100197}{SFGAN(AIS'22)} 等，覆盖场景流、LiDAR 里程计/配准与 3D/4D 感知。
+\end{itemize}
+
+% ===== 专业技能 =====
+\cvsection{\faTools}{专业技能\,{\zihao{6}（Expertise）}}
+\noindent{\footnotesize 熟练 PyTorch、mmdet、diffusers、transformers、CUDA、Docker、PCL；善用 Vibe Coding，预研到量产全流程；参与十余项国基/青基项目。}
+
+\end{document}

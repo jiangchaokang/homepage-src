@@ -1,0 +1,134 @@
+- date: "2026-06"
+  display_date: "Jun 2026"
+  title: "VectorWorld was highlighted and endorsed in a keynote by the President of Bosch Intelligent Driving Control China."
+  description: "Our VectorWorld work was specifically referenced and recognized in the invited keynote “Beneath the Cornerstone, Toward the Future: Automotive Intelligence and Global Expansion in the AI Era” delivered by Wu Yongqiao, President of Bosch Intelligent Driving Control (XC) China."
+  links:
+    - label: "Coverage"
+      url: "https://mp.weixin.qq.com/s/EmTkFPCjwiH0wKh_jvpUKQ"
+      external: true
+
+- date: "2026"
+  display_date: "2026"
+  title: "VectorWorld was accepted to ICML as a Spotlight paper."
+  description: "VectorWorld studies efficient streaming world models via diffusion flow on vector graphs."
+  links:
+    - label: "Publication"
+      url: "/publications/#jiang2026vectorworld"
+      external: false
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2603.17652"
+      external: true
+
+- date: "2026"
+  display_date: "2026"
+  title: "RegFormer++ is available as an arXiv preprint."
+  description: "RegFormer++ extends large-scale 3D LiDAR point registration with projection-aware 2D transformer design."
+  links:
+    - label: "Publication"
+      url: "/publications/#liu2026regformerpp"
+      external: false
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2603.14290"
+      external: true
+
+- date: "2026"
+  display_date: "2026"
+  title: "DifFlow3D was published in IEEE Transactions on Pattern Analysis and Machine Intelligence."
+  description: "The journal version studies hierarchical diffusion models for uncertainty-aware 3D scene flow estimation."
+  links:
+    - label: "Publication"
+      url: "/publications/#liu2026difflow3d"
+      external: false
+    - label: "DOI"
+      url: "https://doi.org/10.1109/TPAMI.2025.3629570"
+      external: true
+
+- date: "2025"
+  display_date: "2025"
+  title: "Unsupervised learning of 3D scene flow with LiDAR odometry assistance was published in IEEE T-ITS."
+  description: "The work explores odometry-assisted unsupervised 3D scene flow learning."
+  links:
+    - label: "Publication"
+      url: "/publications/#wang2025unsupervised"
+      external: false
+    - label: "DOI"
+      url: "https://doi.org/10.1109/TITS.2025.3538765"
+      external: true
+
+- date: "2025"
+  display_date: "2025"
+  title: "Mamba4D was published at CVPR 2025."
+  description: "Mamba4D studies efficient long-sequence point cloud video understanding with disentangled spatial-temporal state space models."
+  links:
+    - label: "Publication"
+      url: "/publications/#liu2025mamba4d"
+      external: false
+    - label: "DOI"
+      url: "https://doi.org/10.1109/CVPR52734.2025.01642"
+      external: true
+
+- date: "2024-10"
+  display_date: "Oct. 2024"
+  title: "NeuroGauss4D-PCI was accepted to NeurIPS 2024."
+  description: "The paper studies 4D neural fields and Gaussian deformation fields for point cloud interpolation."
+  links:
+    - label: "Publication"
+      url: "/publications/#jiang2024neurogauss4d"
+      external: false
+    - label: "Code"
+      url: "https://github.com/jiangchaokang/NeuroGauss4D-PCI"
+      external: true
+
+- date: "2024-05"
+  display_date: "May. 2024"
+  title: "NeuroGauss4D-PCI became available online."
+  description: "A 4D point cloud interpolation framework based on neural fields and Gaussian deformation fields."
+  links:
+    - label: "Publication"
+      url: "/publications/#jiang2024neurogauss4d"
+      external: false
+
+- date: "2024-05"
+  display_date: "May. 2024"
+  title: "MAMBA4D became available online."
+  description: "An efficient long-sequence point cloud video understanding model."
+  links:
+    - label: "Publication"
+      url: "/publications/#liu2025mamba4d"
+      external: false
+
+- date: "2024-03-23"
+  display_date: "Mar. 23, 2024"
+  title: "Invited talk by AutoDriver: CVPR 2024 work on 3DSFLabelling."
+  description: "Invited by AutoDriver to share the CVPR 2024 work on 3D scene flow estimation and 3DSFLabelling."
+  links:
+    - label: "Bilibili Talk"
+      url: "https://www.bilibili.com/video/BV1Wx421k7Pa/?spm_id_from=333.337.search-card.all.click&vd_source=d0360ec294850417abbfb0760708ab11"
+      external: true
+    - label: "Publication"
+      url: "/publications/#jiang20243dsflabelling"
+      external: false
+
+- date: "2024-02"
+  display_date: "Feb. 2024"
+  title: "3DSFLabelling was accepted to CVPR 2024."
+  description: "The paper boosts 3D scene flow estimation by pseudo auto-labeling."
+  links:
+    - label: "Publication"
+      url: "/publications/#jiang20243dsflabelling"
+      external: false
+    - label: "Code"
+      url: "https://github.com/jiangchaokang/3DSFLabelling"
+      external: true
+
+- date: "2024-02"
+  display_date: "Feb. 2024"
+  title: "DifFlow3D was accepted to CVPR 2024."
+  description: "The paper studies robust uncertainty-aware scene flow estimation with iterative diffusion-based refinement."
+  links:
+    - label: "Publication"
+      url: "/publications/#liu2024difflow3d"
+      external: false
+    - label: "DOI"
+      url: "https://doi.org/10.1109/CVPR52733.2024.01431"
+      external: true

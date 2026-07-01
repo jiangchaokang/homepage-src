@@ -1,0 +1,80 @@
+name: Build and publish to public Pages repo
+
+# OPTION B — private source repo → build → PUBLIC dist repo → GitHub Pages.
+# Run this from your PRIVATE source repository. It builds the Jekyll site in
+# `site/`, encrypts the company-internal project pages, and force-pushes ONLY the
+# generated `_site/` to the public repo `jiangchaokang/jiangchaokang.github.io`,
+# whose Pages is served from `main` / (root). No source or git history is exposed.
+#
+# One-time setup (see the deployment guide):
+#   1. Create a public repo `jiangchaokang/jiangchaokang.github.io`.
+#   2. Generate an SSH key pair:  ssh-keygen -t ed25519 -f pages_deploy -N ""
+#   3. Public repo → Settings → Deploy keys → add `pages_deploy.pub`, ALLOW WRITE.
+#   4. This (private) repo → Settings → Secrets → Actions:
+#        - PAGES_DEPLOY_KEY      = contents of the private key `pages_deploy`
+#        - SITE_PROTECT_PASSWORD = 5896  (optional; falls back to 5896)
+#   5. Public repo → Settings → Pages → Source: "Deploy from a branch" → main /(root).
+#
+# The guard keeps this inert if it is ever placed in the public user-site repo.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    if: ${{ github.repository != 'jiangchaokang/jiangchaokang.github.io' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+          working-directory: site
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # User site is served at the domain root, so baseurl stays "" (from _config.yml).
+      - name: Build site
+        run: bundle exec jekyll build --trace
+        env:
+          JEKYLL_ENV: production
+
+      - name: Encrypt protected project pages
+        run: node tools/encrypt-projects.js
+        env:
+          SITE_PROTECT_PASSWORD: ${{ secrets.SITE_PROTECT_PASSWORD || '5896' }}
+
+      - name: Set up SSH deploy key
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.PAGES_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -t rsa,ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
+
+      # Fresh single-commit history each run → the public repo never carries source
+      # history; `.nojekyll` tells Pages to serve the pre-built files as-is.
+      - name: Publish _site to public repo
+        run: |
+          cd _site
+          touch .nojekyll
+          git init -q -b main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -qm "Build from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push -f "git@github.com:jiangchaokang/jiangchaokang.github.io.git" main:main

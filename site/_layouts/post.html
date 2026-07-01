@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<article class="post-detail prose reveal">
+  <header class="post-header">
+    <p class="eyebrow">{{ page.date | date: "%B %-d, %Y" }}</p>
+    <h1>{{ page.title }}</h1>
+    {% if page.description %}
+      <p class="lead">{{ page.description }}</p>
+    {% endif %}
+    {% if page.tags %}
+      <div class="tag-row">
+        {% for tag in page.tags %}
+          <span class="tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </header>
+
+  {{ content }}
+</article>
