@@ -75,4 +75,84 @@ automatically.
 
 The ⌘K search index (`search.json`) is rebuilt automatically on every build.
 
+# GitHub Pages 私有源码 → 公开部署 快速教程
+
+---
+
+## 前提
+- 私有仓：存放源码（含 `.github/workflows/deploy.yml`）
+- 公开仓：`jiangchaokang/jiangchaokang.github.io`（只存编译结果）
+
+---
+
+## 二、生成 SSH 密钥对（5分钟）
+
+```bash
+# 生成密钥
+ssh-keygen -t ed25519 -f pages_deploy -N ""
+
+# 查看公钥（待会儿填入 GitHub）
+cat pages_deploy.pub
+
+# 查看私钥（待会儿填入 GitHub）
+cat pages_deploy
+```
+
+---
+
+## 三、配置 GitHub（网页端）
+
+**3.1 公开仓 → 添加公钥**
+> Settings → Deploy keys → Add deploy key
+> - Title：`pages_deploy`
+> - Key：粘贴 `pages_deploy.pub` 内容
+> - ✅ 勾选 Allow write access
+
+**3.2 私有仓 → 添加私钥和密码**
+> Settings → Secrets and variables → Actions → New repository secret
+
+| Name | Value |
+|---|---|
+| `PAGES_DEPLOY_KEY` | `pages_deploy` 私钥全文（含 BEGIN/END 行）|
+| `SITE_PROTECT_PASSWORD` | `5896` |
+
+**3.3 公开仓 → 配置 Pages 来源**
+> Settings → Pages → Source:
+> `Deploy from a branch` → `main` → `/(root)` → Save
+
+**3.4 公开仓 → 修改默认分支为 main**
+> Settings → Branches → Default branch → 切换为 `main`
+
+---
+
+## 四、触发部署
+
+```bash
+# 在私有仓目录下，push 即可自动触发 deploy.yml
+git add .
+git commit -m "deploy"
+git push origin main
+```
+
+> 或手动触发：私有仓 → Actions → `Build and publish to public Pages repo` → Run workflow
+
+---
+
+## 五、验证
+
+- 私有仓 → Actions → 查看 `Build and publish to public Pages repo` 是否 ✅
+- 打开 https://jiangchaokang.github.io 确认网站上线
+
+---
+
+## 六、重新生成密钥（丢失时）
+
+```bash
+# 重新生成
+ssh-keygen -t ed25519 -f pages_deploy -N ""
+
+# 公开仓：删除旧 Deploy Key → 添加新 pages_deploy.pub
+# 私有仓：更新 Secret PAGES_DEPLOY_KEY 为新私钥内容
+```
+
 See [`site/AGENTS.md`](site/AGENTS.md) for maintenance rules and [`site/DESIGN.md`](site/DESIGN.md) for the visual system.
