@@ -17,7 +17,7 @@
 
 % ===== Education =====
 \cvsection{\faGraduationCap}{Education}
-\entry{2020.09\dto2023.06}{M.Sc.$\cdot$Control Sci.\&Eng.$\cdot$SJTU joint program\quad Advisors: H. Wang (Dean, Pujiang Int'l), Y. Miao\quad \tlink{https://irmv.sjtu.edu.cn/cn}{IRMV Lab}}{}
+\entry{2020.09\dto2023.06}{M.Sc.$\cdot$Control Sci.\&Eng.$\cdot$SJTU/CUMT\ Adv.: H. Wang (Dean, Pujiang Int'l), Y. Miao\ \tlink{https://irmv.sjtu.edu.cn/cn}{IRMV Lab}}{}
 
 % ===== Work Experience =====
 \cvsection{\faPenNib}{Work Experience}
@@ -28,35 +28,54 @@
 \cvsection{\faBriefcase}{Project Experience}
 
 \project{Generative Closed-Loop AD Simulation~\weblink{https://jiangchaokang.github.io/projects/generative-ad-simulation-platform/}}{Bosch (XC-CN)\,$\cdot$\,2026.01\dto\textit{Present}}
-\projbody{\pn{1}Designed a 7V surround video generator over the full Map$\to$WorldSim$\to$7V pipeline, distilled for \textbf{13.9$\times$} faster inference; \pn{2}OmniDream delivered the \textbf{industry-first}, near-real-time 7V streaming generation; \pn{3}built a Smart-Agent vector world model for controllable closed-loop sim.}
+\projbody{%
+    \pn{1} Led 7V surround-video generation end-to-end (Map$\to$WorldSim$\to$7V); distillation gave \textbf{13.9$\times$} faster inference;\\
+    \pn{2} built a 3-stage OmniDream scheme: \textcircled{1} bidirectional teacher (global temporal) $\to$ \textcircled{2} causal student (autoregressive) $\to$ \textcircled{3} distillation + self-forcing student (streaming) --- industry-first real-time streaming 7V video generation;\\
+    \pn{3} designed a SmartAgent $\times$ vector-world-model framework for semantically-controllable, closed-loop AD simulation.%
+}
 
 \project{Two-/One-Stage Perception Iteration~\weblink{https://jiangchaokang.github.io/projects/j6m-static-dynamic-perception/}}{Bosch (XC-CN)\,$\cdot$\,2025.03\dto2025.12}
-\projbody{\pn{1}Built and iterated a static-perception OneModel (3$\to$7 features), owning its data loop and releases; \pn{2}delivered a DYO\,\&\,Static two-in-one OneModel (one-stage); \pn{3}led dynamic-model quantization and Mono3D releases.}
+\projbody{%
+    \pn{1} Built static OneModel (features 2$\to$8: {\zihao{6}laneboundary / roadedge \(\to\) roadmarker / centerline / goalpoint / GRE / freespace / drivepath}); optimized Training/Inference/Evaluation frameworks; shipped to \textbf{3} production Platform Models over 20+ major releases;\\
+    \pn{2} delivered a DYO\,\&\,Static two-in-one OneModel (one-stage); \pn{3} led dynamic-model quantization \& Mono3D releases.
+}
 
 \project{Controllable Surround Video Generation~\weblink{https://jiangchaokang.github.io/projects/phigent-gen-model/}}{Phigent Robotics\,$\cdot$\,2024.07\dto2025.03}
-\projbody{\pn{1}Single-frame: extended MagicDrive to internal rigs (4 fisheye/7V/11V) with 3D-BBox/map labels for data gen and editing; \pn{2}Video: on OpenSora-STDiT + MagicDrive, built text-/layout-controllable surround video across views/res/length, up to \textbf{242+ frames}, validated on cone-lines and truck swaps.}
+\projbody{%
+    \pn{1} Built a controllable generation/editing pipeline for internal surround-view data (MagicDrive), supporting 4-fisheye/7V/11V;\\
+    \pn{2} iterated a multimodal surround-video framework (OpenSora-STDiT $\times$ MagicDrive): text/layout control across views/resolutions/durations, stable \textbf{241+ frame} generation; validated on cone-line/truck-replacement scenarios.%
+}
 
 \project{Perception/Data-Gen Optimization \& Sparse E2E PoC~\weblink{https://jiangchaokang.github.io/projects/auto-labeling-4d-lidar/}}{Phigent Robotics\,$\cdot$\,2024.02\dto2024.08}
-\projbody{\pn{1}Iterated a BEVFusion dynamic auto-labeler (better VRU precision, long-range recall); \pn{2}optimized calibration QC and pure-LiDAR 3D-detection efficiency; \pn{3}built a Pillar 3D velocity-flow model on J6E/Orin with scene-flow labeling and point-cloud prediction; \pn{4}owned the 11V+LiDAR Sparse BEV-Fusion and fused CUDA ops.}
+\projbody{%
+    \pn{1} AutoLabelling: iterated a BEVFusion dynamic auto-labeler for better VRU precision and long-range recall;\\
+    \pn{2} Perception toolchain: optimized multi-sensor calibration QC and pure-LiDAR 3D-detection efficiency;\\
+    \pn{3} built a Pillar 3D velocity-flow model on J6E/Orin, with scene-flow auto-labeling and point-cloud temporal-prediction;\\
+    \pn{4} supported 11V Camera $\times$ LiDAR Sparse BEV-Fusion design and maintained fused CUDA ops.%
+}
 
-\project{Stereo Road-Preview Magic-Carpet (SOP)~\weblink{https://jiangchaokang.github.io/projects/road-preview-disparity/}}{Phigent Robotics\,$\cdot$\,2023.06\dto2024.04}
-\projbody{\pn{1}Deployed road-segmentation models on TDA4, Horizon J5/J6E and NVIDIA Orin (FP + QAT), balancing accuracy/speed into mass production; grew data 5W$\to$\textbf{23W+} over 20+ releases; \pn{2}prototyped a stereo depth model in parallel.}
+\project{Stereo Road-Preview Magic-Carpet (DiSus System)~\weblink{https://jiangchaokang.github.io/projects/road-preview-disparity/}}{Phigent Robotics\,$\cdot$\,2023.06\dto2024.04}
+\projbody{%
+    \pn{1} Deployed road-segmentation models on TDA4, Horizon J5/J6E and NVIDIA Orin (float + QAT), balancing accuracy/efficiency into mass production; grew data 5W$\to$\textbf{23W+} over 20+ releases;
+    \pn{2} pre-researched a stereo depth-estimation model across architectures, pushing toward mass production.
+}
 
-\project{More projects (see \tlink{https://jiangchaokang.github.io/projects/}{homepage}, some encrypted: 5896)}{}
-\projbody{8V pure-vision E2E, vector + sensor-level closed-loop sim, perception-planning-decision (aerospace), Positec lawn-mower.}
+\project{More projects (see \tlink{https://jiangchaokang.github.io/projects/}{homepage}, some content encrypted: 5896)}{}
+\projbody{Autonomous lawn-mower-robot perception (Positec), offline pure-vision 4D AutoLabeling system, etc.}
 
 % ===== Academic Achievement =====
 \cvsection{\faBookOpen}{Academic Achievement}
 \begin{itemize}
-\item \textbf{10+ papers} across ICML (Spotlight), NeurIPS, CVPR, ICCV, AAAI and T-PAMI, TII, TIM, TITS, AIS (full list on \tlink{https://scholar.google.com/citations?user=6gZ8vloAAAAJ}{Scholar}).
-\item \textbf{VectorWorld} (\textbf{ICML Spotlight})~\ghlink{https://github.com/jiangchaokang/VectorWorld}\ Streaming vector world model for AD, dual SOTA in accuracy and efficiency; cited in a keynote by the President of Bosch Intelligent Driving Control China.
-\item \textbf{3DSFLabelling} (\textbf{CVPR 2024})~\ghlink{https://github.com/jiangchaokang/3DSFLabelling}\ \& \textbf{NeuroGauss4D-PCI} (\textbf{NeurIPS 2024})~\ghlink{https://github.com/jiangchaokang/NeuroGauss4D-PCI}\ ultra-precise 3D motion-flow auto-labeling and 4D point-cloud interpolation/prediction; both SOTA.
-\item \textbf{Pseudo-LiDAR Scene Flow} (\textbf{TII}, Q1) First to estimate 3D scene flow from monocular vision via a depth-consistency loss.
-\item \textbf{More:} \blink{https://doi.org/10.1109/TPAMI.2025.3629570}{DifFlow3D(CVPR'24/T-PAMI)}, \blink{https://doi.org/10.1109/CVPR52734.2025.01642}{Mamba4D(CVPR'25)}, \blink{https://doi.org/10.1109/ICCV51070.2023.00776}{RegFormer(ICCV'23)}, \blink{https://doi.org/10.1609/aaai.v37i2.25256}{TransLO(AAAI'23)}, \blink{https://doi.org/10.1109/TIM.2023.3315416}{Pseudo-LiDAR VO(TIM'23)}, \blink{https://doi.org/10.1002/aisy.202100197}{SFGAN(AIS'22)} --- scene flow, LiDAR odometry/registration, 3D/4D perception.
+\item \textbf{10+ papers} across ICML (Spotlight), NeurIPS, CVPR, ICCV, AAAI and T-PAMI, TII, TIM, TITS, AIS.
+\item \textbf{VectorWorld} (\textbf{ICML 2026 Spotlight})~\ghlink{https://github.com/jiangchaokang/VectorWorld}\ Streaming vector world model for AD, dual SOTA in accuracy and efficiency.
+\item \textbf{3DSFLabelling} (\textbf{CVPR 2024})~\ghlink{https://github.com/jiangchaokang/3DSFLabelling}\ Ultra-precise motion-flow labeling/augmentation, boosting perception to SOTA.
+\item \textbf{NeuroGauss4D-PCI} (\textbf{NeurIPS 2024})~\ghlink{https://github.com/jiangchaokang/NeuroGauss4D-PCI}\ 4D neural/Gaussian fields for point-cloud interpolation \& prediction.
+\item \textbf{Pseudo-LiDAR Scene Flow} (\textbf{TII}, Q1 Top)~\ghlink{https://github.com/IRMVLab/3DSF-PL}\ First pure-vision scene-flow estimation via depth-consistency loss.
+\item \textbf{More:} \blink{https://doi.org/10.1109/TPAMI.2025.3629570}{DifFlow3D(CVPR'24/T-PAMI)}, \blink{https://doi.org/10.1109/CVPR52734.2025.01642}{Mamba4D(CVPR'25)}, \blink{https://doi.org/10.1109/ICCV51070.2023.00776}{RegFormer(ICCV'23)}, \blink{https://doi.org/10.1609/aaai.v37i2.25256}{TransLO(AAAI'23)}, \blink{https://doi.org/10.1109/TIM.2023.3315416}{Pseudo-LiDAR VO(TIM'23)}, \blink{https://doi.org/10.1002/aisy.202100197}{SFGAN(AIS'22)} --- covering scene flow, odometry/registration, and 3D/4D perception and generation.
 \end{itemize}
 
 % ===== Expertise =====
 \cvsection{\faTools}{Expertise}
-\noindent{\footnotesize PyTorch, mmdet, diffusers, transformers, CUDA, Docker, PCL; Vibe-Coding; R\&D-to-production; 10+ NSFC (general/youth) grants.}
+\noindent{\footnotesize PyTorch, mmdet, diffusers, transformers, CUDA, Docker, PCL; Vibe Coding; R\&D-to-production; 10+ NSFC (General/Youth) grants.}
 
 \end{document}
