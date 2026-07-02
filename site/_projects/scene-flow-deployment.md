@@ -1,6 +1,7 @@
 ---
 title: "3D Scene Flow: Auto-Labeling & Production Deployment"
 subtitle: "An unsupervised point- and occupancy-level 3D scene-flow auto-labeling system, two deployable flow networks, an ultra-light production head, and full ONNX → TensorRT / Horizon J6E deployment."
+description: "An unsupervised 3D scene-flow auto-labeling system, two deployable flow networks, an ultra-light production head, and full ONNX → TensorRT / Horizon J6E deployment."
 date_range: "2023.08–2023.12"
 partners: "PhiGent Robotics"
 role: "3D Scene Flow Algorithm Engineer"

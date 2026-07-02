@@ -1,6 +1,7 @@
 ---
 title: "Master's Graduation — Introduction Film"
 subtitle: "A short self-introduction film recorded for my 2023 master's graduation, walking through my research journey and engineering work."
+description: "A short self-introduction film for my 2023 master's graduation — a compact tour of my research focus, labs and mentors, and the perception and 3D/4D systems I built."
 date_range: "2023.06"
 partners: "CUMT × SJTU · Joint Master's Program (2020–2023)"
 role: "Author & Presenter"
@@ -30,7 +31,7 @@ summary: "A short introduction film I made for my 2023 master's graduation — a
   </p>
 
   <div class="proj-figure">
-    <video controls playsinline preload="metadata">
+    <video controls playsinline preload="metadata" disablepictureinpicture disableremoteplayback>
       <source src="{{ '/assets/media/projects/graduation-intro-video/cv_jck.mp4' | relative_url }}" type="video/mp4">
       Your browser does not support embedded video. You can
       <a href="{{ '/assets/media/projects/graduation-intro-video/cv_jck.mp4' | relative_url }}">download the film</a> instead.

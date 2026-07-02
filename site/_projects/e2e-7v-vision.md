@@ -1,6 +1,7 @@
 ---
 title: "One-Stage End-to-End Driving — 8V Pure Vision"
 subtitle: "From pixels to planning in a single network: 8-camera surround vision → unified BEV → three perception heads → self-supervised future-BEV prediction → a Diffusion-Flow AI planner, all trained end-to-end with no hand-designed 3D-label interface."
+description: "A one-stage, pure-vision end-to-end driving POC — 8 surround cameras into one BEV, three perception heads, future-BEV prediction, and a Diffusion-Flow planner, trained jointly."
 date_range: "2025.12–2026.04"
 partners: "Bosch (XC-CN)"
 role: "World Models Algorithm Engineer"

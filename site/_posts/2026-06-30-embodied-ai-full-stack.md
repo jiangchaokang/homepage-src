@@ -10,7 +10,7 @@ talk: true
 duration: "23:34"
 slides: 20
 cover: "/assets/media/blog/Embodied_AI/poster.jpg"
-video: "/assets/media/blog/Embodied_AI/Embodied_AI.mp4"
+bilibili: "BV1VGTq6LERL"
 poster: "/assets/media/blog/Embodied_AI/poster.jpg"
 takeaways:
   - "Body — robot morphologies, simulators, active perception, navigation and grasping, tactile sensing, data collection, and sim-to-real transfer."

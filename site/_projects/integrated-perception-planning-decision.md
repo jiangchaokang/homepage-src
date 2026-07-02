@@ -1,6 +1,7 @@
 ---
 title: "Integrated Perception, Planning, and Decision-Making Network"
 subtitle: "A unified multi-task network that fuses RGB, LiDAR, and infrared for closed-loop perception, planning, and decision-making in simulation."
+description: "A unified multi-task network fusing RGB, LiDAR, and infrared for closed-loop perception, planning, and decision-making, trained end-to-end in simulation."
 date_range: "2021.08–2022.10"
 partners: "The Future Laboratory of the Second Aerospace Academy"
 role: "Perception and Simulation Developer"

@@ -1,6 +1,7 @@
 ---
 title: "End-to-End Driving: 11V + LiDAR Fusion"
 subtitle: "A sparse-centric end-to-end autonomous-driving stack fusing 11 cameras (7 pinhole + 4 fisheye) with LiDAR. I owned the BEV-fusion CUDA operator and the AI-planner training."
+description: "A sparse-centric end-to-end driving stack fusing 11 cameras and LiDAR — a fused BEV CUDA operator plus an AI planner trained to output motion and planning together."
 date_range: "2024 · Collaboration"
 partners: "Lantu"
 role: "BEV Fusion & AI-Planner Engineer"

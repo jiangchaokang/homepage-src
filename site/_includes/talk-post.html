@@ -1,7 +1,26 @@
 {%- comment -%}
   Talk post — one explainer video per page. Reads page front matter:
-  title, description, eyebrow, byline, duration, slides, video, poster, takeaways[], note.
-  Single big controllable player (sound preserved), scroll-aware via .talk-video.
+  title, description, eyebrow, byline, duration, slides, takeaways[], note.
+
+  Video source — first match wins:
+    1. `bilibili: "BVxxxxxxxxxx"` (+ optional `bilibili_page: N` for a multi-part
+       upload). Preferred. Renders a click-to-load facade (poster + play button)
+       that swaps in the real Bilibili iframe player only after a click, so the
+       third-party player never loads a single byte until the visitor asks for
+       it. The facade is a real link to the Bilibili watch page, so it still
+       works with JavaScript disabled — progressive enhancement, not a hard
+       dependency.
+    2. `video: "/assets/media/...mp4"` — legacy/local fallback for a talk that
+       has not been uploaded to Bilibili yet. Same player as before.
+    3. Neither — a static, honestly-labelled cover image ("Video coming soon").
+       Never a play button that leads nowhere.
+
+  `poster` sets the still image for all three modes. Optional `poster_fallback`
+  is used as an `onerror` fallback if `poster` points at a remote URL that may
+  fail to load (e.g. hotlinked cover art).
+
+  See /TALK_POST_GUIDE.md at the site root for the full authoring guide,
+  field reference, and a ready-to-paste AI prompt for adding new talk posts.
 {%- endcomment -%}
 <article class="talk reveal">
   <header class="talk-hero">
@@ -12,13 +31,57 @@
       <span class="talk-chip"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>{{ page.duration | default: "Talk" }}</span>
       {% if page.slides %}<span class="talk-chip">{{ page.slides }} slides</span>{% endif %}
       <span class="talk-chip">{{ page.date | date: "%b %-d, %Y" }}</span>
+      {% if page.bilibili %}
+        <a class="talk-chip talk-chip-link" href="https://www.bilibili.com/video/{{ page.bilibili }}/" target="_blank" rel="noopener">
+          Watch on Bilibili
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      {% endif %}
     </div>
   </header>
 
   <figure class="talk-stage">
-    <video class="talk-video" controls preload="none" playsinline poster="{{ page.poster | relative_url }}" disablepictureinpicture>
-      <source src="{{ page.video | relative_url }}" type="video/mp4">
-    </video>
+    {% if page.bilibili %}
+      <a
+        class="talk-facade"
+        data-talk-facade
+        data-bvid="{{ page.bilibili }}"
+        {% if page.bilibili_page %}data-bvid-page="{{ page.bilibili_page }}"{% endif %}
+        href="https://www.bilibili.com/video/{{ page.bilibili }}/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Play “{{ page.title }}” on Bilibili"
+      >
+        <img
+          src="{{ page.poster | relative_url }}"
+          alt=""
+          loading="lazy"
+          {% if page.poster_fallback %}onerror="this.onerror=null;this.src='{{ page.poster_fallback | relative_url }}'"{% endif %}
+        >
+        <span class="talk-facade-scrim" aria-hidden="true"></span>
+        <span class="talk-facade-play" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </span>
+        <span class="talk-facade-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7z"/></svg>
+          Play on Bilibili
+        </span>
+      </a>
+    {% elsif page.video %}
+      <video class="talk-video" controls preload="none" playsinline poster="{{ page.poster | relative_url }}" disablepictureinpicture>
+        <source src="{{ page.video | relative_url }}" type="video/mp4">
+      </video>
+    {% else %}
+      <span class="talk-cover-only">
+        <img
+          src="{{ page.poster | relative_url }}"
+          alt="{{ page.title }} — cover"
+          loading="lazy"
+          {% if page.poster_fallback %}onerror="this.onerror=null;this.src='{{ page.poster_fallback | relative_url }}'"{% endif %}
+        >
+        <span class="talk-cover-tag">Video coming soon</span>
+      </span>
+    {% endif %}
   </figure>
 
   {% if page.takeaways %}

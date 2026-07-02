@@ -1,6 +1,7 @@
 ---
 title: "4D Auto-Labeling & Pure LiDAR 3D Detection"
 subtitle: "Two eras of autonomous-driving auto-labeling — a Tesla-inspired vision-only 4D pipeline, then a multi-modal and pure-LiDAR 3D detection system."
+description: "A two-era auto-labeling journey: a Tesla-AI-Day-inspired vision-only 4D pipeline, then a multi-modal 4D auto-labeling and production pure-LiDAR 3D detection system."
 date_range: "2022.11–2024"
 partners: "Hozon Auto × SJTU IRMV · PhiGent Robotics"
 role: "Perception Team Leader · 3D Perception Algorithm Engineer"
@@ -219,7 +220,7 @@ atlas:
       </div>
 
       <div class="proj-figure" style="margin-top:1.1rem">
-        <video autoplay muted loop playsinline preload="metadata" controls>
+        <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback controls>
           <source src="{{ '/assets/media/projects/offline-4d-labeling/offline_visual_auto_labeling.mp4' | relative_url }}" type="video/mp4">
           Your browser does not support embedded video.
         </video>

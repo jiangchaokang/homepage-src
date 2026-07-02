@@ -1,6 +1,7 @@
 ---
 title: "Generative Autonomous-Driving Simulation Platform"
 subtitle: "A Cosmos-Transfer2.5 world model turned into a production simulation platform: sensor-level 7V generation, real-map (OSM) scenarios, a WorldSim↔WorldModel gRPC bridge, the first 4-step distillation of 7V surround video, and an all-in-one OneModel that unifies layout generation, GS-fix, and harmonization."
+description: "A Cosmos-Transfer2.5-based generative simulation platform — 7V surround generation, real-map (OSM) scenarios, a WorldSim↔WorldModel gRPC bridge, 4-step video distillation, and a unified OneModel."
 date_range: "2025.03–Present"
 partners: "Bosch (XC-CN)"
 role: "World Models Algorithm Engineer"

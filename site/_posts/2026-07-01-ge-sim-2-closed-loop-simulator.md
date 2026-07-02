@@ -10,7 +10,7 @@ talk: true
 duration: "12:52"
 slides: 11
 cover: "/assets/media/blog/GE_Sim/poster.jpg"
-video: "/assets/media/blog/GE_Sim/GE-Sim.mp4"
+bilibili: "BV1RgTq61EKE"
 poster: "/assets/media/blog/GE_Sim/poster.jpg"
 takeaways:
   - "Body-state expert — reads joint angles and gripper state straight out of the video latent space."

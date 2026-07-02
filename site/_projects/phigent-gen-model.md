@@ -1,6 +1,7 @@
 ---
 title: "Controllable Surround-View Driving Generation"
 subtitle: "A controllable multi-view world model for driving: 3D layout + map + multi-granularity control signals injected into a diffusion process to generate geometrically-consistent 4V / 7V / 11V images and video — for data augmentation and open-loop simulation."
+description: "A controllable surround-view driving generator — 3D layout, map, and multi-granularity control signals diffused into geometrically-consistent 4V/7V/11V images and video."
 date_range: "2023.05–2024"
 partners: "PhiGent Robotics"
 role: "Generative Driving Algorithm Engineer"

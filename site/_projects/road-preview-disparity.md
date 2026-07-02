@@ -1,6 +1,7 @@
 ---
 title: "Road Preview: Surface-Element Segmentation"
 subtitle: "Robust segmentation of small road elements — manhole covers and speed bumps — for the road-preview / 'magic-carpet' suspension feature, hardened against hard cases and quantized for TDA4 edge deployment."
+description: "Robust segmentation of manhole covers and speed bumps for a road-preview suspension feature, hardened against hard cases and INT8-quantized for TDA4 edge deployment."
 date_range: "2023.05–2023.11"
 partners: "BYD"
 role: "Perception Model Optimization Engineer"
@@ -260,25 +261,25 @@ privacy_note: "Only high-level model and deployment information is shown. Intern
 
   <div class="proj-figrow two">
     <figure class="proj-figure">
-      <video autoplay muted loop playsinline preload="metadata">
+      <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback>
         <source src="{{ '/assets/media/projects/magic-carpet/pred_4.7.17_vis.mp4' | relative_url }}" type="video/mp4">
       </video>
       <figcaption><strong>Hard-failure replay.</strong> Re-injection test on complex failure scenes — resolving most false and missed detections.</figcaption>
     </figure>
     <figure class="proj-figure">
-      <video autoplay muted loop playsinline preload="metadata">
+      <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback>
         <source src="{{ '/assets/media/projects/magic-carpet/pred_1280_case.mp4' | relative_url }}" type="video/mp4">
       </video>
       <figcaption><strong>High-resolution stress test.</strong> Generalization under large 1280-input signals on complex, difficult scenes.</figcaption>
     </figure>
     <figure class="proj-figure">
-      <video autoplay muted loop playsinline preload="metadata">
+      <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback>
         <source src="{{ '/assets/media/projects/magic-carpet/vis_seg2.mp4' | relative_url }}" type="video/mp4">
       </video>
       <figcaption><strong>Joint post-processing.</strong> Combined post-processing that also outputs the target's elevation / height information.</figcaption>
     </figure>
     <figure class="proj-figure">
-      <video autoplay muted loop playsinline preload="metadata">
+      <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback>
         <source src="{{ '/assets/media/projects/magic-carpet/badcase_vis_waterstains.mp4' | relative_url }}" type="video/mp4">
       </video>
       <figcaption><strong>Night &amp; garage generalization.</strong> Generalization test on night and underground-garage scenes with heavy water stains.</figcaption>

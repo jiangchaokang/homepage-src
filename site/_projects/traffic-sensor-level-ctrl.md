@@ -1,6 +1,7 @@
 ---
 title: "Vector Traffic Generation & Sensor-Level Closed-Loop Simulation"
 subtitle: "Two halves of a controllable driving simulator: a structure-aware temporal vector world model that compresses and generates traffic as latents, and a sensor-level closed-loop pipeline that reconstructs, populates, and re-renders photorealistic surround video."
+description: "A two-level controllable driving simulator — a temporal vector world model that generates traffic as latents, and a sensor-level closed-loop pipeline for photorealistic re-rendering."
 date_range: "2025.05–Present"
 partners: "Bosch (XC-CN)"
 role: "World Models Algorithm Engineer"

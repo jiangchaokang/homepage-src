@@ -10,7 +10,7 @@ talk: true
 duration: "18:29"
 slides: 18
 cover: "/assets/media/blog/OmniDreams/poster.jpg"
-video: "/assets/media/blog/OmniDreams/OmniDreams.mp4"
+bilibili: "BV1ZATq6nEbP"
 poster: "/assets/media/blog/OmniDreams/poster.jpg"
 takeaways:
   - "Closed-loop core: the policy outputs actions, the world model renders the matching frames, and those frames feed back to the policy — round after round."

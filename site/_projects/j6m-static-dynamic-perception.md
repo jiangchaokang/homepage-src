@@ -1,6 +1,7 @@
 ---
 title: "J6M Static & Dynamic Perception"
 subtitle: "A production driving-perception stack — a shared-BEV static OneModel, a 4D-sparse dynamic model, and on-board latency compression — shipped on a mass-production mid-trim platform."
+description: "Production driving perception on a mass-production platform — a shared-BEV static OneModel, a 4D-sparse dynamic model, and on-board latency compression to ~13.88 ms."
 date_range: "2025.04–2026.03"
 partners: "Bosch (XC-CN)"
 role: "Perception Algorithm Engineer"

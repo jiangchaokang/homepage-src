@@ -226,6 +226,32 @@
     }
   }
 
+  /* ---- Talk stage: click-to-load Bilibili facade ----
+     The poster + play button is a real <a href="https://www.bilibili.com/..."> ,
+     so it already works with JavaScript disabled. With JS, a click swaps the
+     facade for a real <iframe> instead of following the link — the official
+     player embed only ever loads after the visitor asks for it. */
+  qsa("[data-talk-facade]").forEach((facade) => {
+    facade.addEventListener("click", (event) => {
+      const bvid = facade.getAttribute("data-bvid");
+      if (!bvid) return; // no id to embed — let the real link open Bilibili
+      event.preventDefault();
+
+      const page = facade.getAttribute("data-bvid-page");
+      const params = new URLSearchParams({ bvid: bvid, autoplay: "1", high_quality: "1", danmaku: "0" });
+      if (page) params.set("page", page);
+
+      const iframe = document.createElement("iframe");
+      iframe.src = "https://player.bilibili.com/player.html?" + params.toString();
+      iframe.className = "talk-bilibili-frame";
+      iframe.title = facade.getAttribute("aria-label") || "Bilibili video player";
+      iframe.setAttribute("allow", "autoplay; fullscreen; picture-in-picture; encrypted-media");
+      iframe.setAttribute("allowfullscreen", "");
+      iframe.setAttribute("scrolling", "no");
+      facade.replaceWith(iframe);
+    });
+  });
+
   const themeToggle = qs("[data-theme-toggle]");
 
   if (themeToggle) {

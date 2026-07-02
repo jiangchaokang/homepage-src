@@ -1,6 +1,7 @@
 ---
 title: "Autonomous Lawn-Mower Robot Perception"
 subtitle: "A safety-critical LiDAR and multimodal perception stack for autonomous loading/unloading, slope traversal, grass-obstacle detection, and embedded deployment."
+description: "A safety-critical LiDAR and multimodal perception stack for an autonomous lawn-mower robot — self loading/unloading, grass-obstacle detection, and an MCU-deployed BEV safety detector."
 date_range: "2021.09–2023.03"
 partners: "SJTU IRMV × Positec Technology"
 role: "Perception Algorithm Developer · 2D–3D Fusion Researcher"

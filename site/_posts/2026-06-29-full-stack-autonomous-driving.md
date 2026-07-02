@@ -10,7 +10,7 @@ talk: true
 duration: "27:39"
 slides: 20
 cover: "/assets/media/blog/ad_arch/poster.jpg"
-video: "/assets/media/blog/ad_arch/AD_ARCH.mp4"
+bilibili: "BV1dKTq6EEnP"
 poster: "/assets/media/blog/ad_arch/poster.jpg"
 takeaways:
   - "Dual-brain domain control: an AI compute domain (APU) paired with a safety execution domain (RPU)."

@@ -125,6 +125,8 @@ brute-forced offline. This stops crawlers and casual/accidental access — it is
 use a long random passphrase, or do not publish the page at all. Never commit the
 plaintext `_site/` output of a protected page.
 
+### Blog
+
 Blog posts live in:
 
 ```text
@@ -136,6 +138,26 @@ Use filename format:
 ```text
 YYYY-MM-DD-title.md
 ```
+
+Most new posts are the **"talk" format**: one recorded video walkthrough per
+post, embedded from Bilibili. That format is fully templated — **follow
+`TALK_POST_GUIDE.md`** (repo root of `site/`) to add one; it has the complete
+front-matter schema, a copy-paste template, and a ready-to-use AI prompt.
+Don't hand-roll a new talk post's HTML — `_includes/talk-post.html` already
+renders every field.
+
+A different, free-form "note" layout (rich custom HTML, no single video) is
+used for text/diagram reading notes — see e.g.
+`_posts/2026-06-26-from-3dgrut-to-artifixer3d.md` for that pattern. There is
+no template for it; it is intentionally bespoke per post.
+
+Videos in general: prefer uploading to Bilibili and embedding (per
+`TALK_POST_GUIDE.md`) over committing new local `.mp4` files — this repo has
+already paid the cost of a bloated media history once. If a local `.mp4` is
+unavoidable, keep it as small as reasonably possible and confirm it is
+actually referenced somewhere before committing (an unreferenced file under
+`assets/media/` is pure waste — nothing automatically checks for this, so it
+is worth a quick `grep` for the filename before and after any content rework).
 
 ## Design Rules
 

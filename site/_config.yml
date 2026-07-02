@@ -79,6 +79,7 @@ exclude:
   - tools
   - AGENTS.md
   - DESIGN.md
+  - TALK_POST_GUIDE.md
   - assets/media/blog/script
   - assets/media/projects/perception_onemodel/build_chart.py
   - log.txt

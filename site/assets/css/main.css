@@ -4812,8 +4812,59 @@ table.cmp tr:last-child td { border-bottom: 0; }
 .talk-meta { margin: 1rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .talk-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.28rem 0.7rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface-soft); font-size: 0.78rem; font-weight: 700; color: var(--muted); }
 .talk-chip svg { color: var(--accent-cyan); }
+.talk-chip-link { color: var(--ink); transition: border-color 160ms ease, color 160ms ease; }
+.talk-chip-link:hover { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.talk-chip-link svg { color: var(--soft); }
 .talk-stage { margin: 0; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--line); background: #07070a; box-shadow: var(--shadow); }
-.talk-stage video { width: 100%; aspect-ratio: 16 / 9; display: block; background: #07070a; cursor: pointer; }
+.talk-stage video,
+.talk-stage iframe,
+.talk-stage .talk-facade,
+.talk-stage .talk-cover-only { width: 100%; aspect-ratio: 16 / 9; display: block; background: #07070a; }
+.talk-stage video { cursor: pointer; }
+.talk-stage iframe { border: 0; }
+
+/* Bilibili facade — poster + play button; the real <iframe> is only injected
+   on click (assets/js/main.js), so the third-party player is fully opt-in. */
+.talk-facade { position: relative; cursor: pointer; }
+.talk-facade img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.talk-facade-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(7,7,10,0.02) 45%, rgba(7,7,10,0.62) 100%);
+  transition: background 200ms ease;
+}
+.talk-facade:hover .talk-facade-scrim,
+.talk-facade:focus-visible .talk-facade-scrim { background: linear-gradient(180deg, rgba(7,7,10,0.12) 40%, rgba(7,7,10,0.68) 100%); }
+.talk-facade-play {
+  position: absolute; left: 50%; top: 50%; width: 76px; height: 76px;
+  transform: translate(-50%, -50%); display: grid; place-items: center; border-radius: 999px;
+  background: rgba(255,255,255,0.96); color: #0a0d14;
+  box-shadow: 0 14px 38px rgba(0,0,0,0.4); padding-left: 4px;
+  transition: transform 220ms cubic-bezier(.2,.7,.2,1), background 200ms ease;
+}
+.talk-facade:hover .talk-facade-play,
+.talk-facade:focus-visible .talk-facade-play { transform: translate(-50%, -50%) scale(1.08); background: #fff; }
+.talk-facade-badge {
+  position: absolute; left: 1.15rem; bottom: 1.15rem; z-index: 2;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 0.8rem; font-weight: 750; color: #fff;
+  padding: 0.4rem 0.75rem; border-radius: 999px;
+  background: color-mix(in srgb, #07070a 55%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+.talk-facade:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* Cover-only fallback — no video source yet; a static, honest preview. */
+.talk-cover-only { position: relative; }
+.talk-cover-only img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.talk-cover-tag {
+  position: absolute; left: 1.15rem; bottom: 1.15rem; z-index: 2;
+  font-size: 0.8rem; font-weight: 750; color: #fff;
+  padding: 0.4rem 0.75rem; border-radius: 999px;
+  background: color-mix(in srgb, #07070a 55%, transparent);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.18);
+}
 .talk .bx-section { max-width: 84ch; }
 
 /* ============================================================
