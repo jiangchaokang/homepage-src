@@ -768,7 +768,7 @@
   });
 
   /* ---- Image lightbox: click any figure image to zoom ---- */
-  const zoomables = qsa(".proj-figure img, .viz-media img, .gallery-item img");
+  const zoomables = qsa(".proj-figure img, .viz-media img, .gallery-item img, .bx-fig img");
   if (zoomables.length) {
     let lightbox = null;
     let lightboxImg = null;

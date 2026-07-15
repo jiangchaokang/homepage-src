@@ -1,3 +1,15 @@
+- date: "2026-07"
+  display_date: "Jul 2026"
+  title: "VectorWorld was presented at ICML 2026 in Seoul."
+  description: "I presented our Spotlight paper at COEX and wrote up five signals from the show floor — real-time streaming world models, one-step flow generation, closed-loop simulation, 3D geometry, and reliable multimodal evaluation."
+  links:
+    - label: "Blog"
+      url: "/blog/2026/07/12/icml-2026-seoul-world-models/"
+      external: false
+    - label: "Conference"
+      url: "https://icml.cc/Conferences/2026"
+      external: true
+
 - date: "2026-06"
   display_date: "Jun 2026"
   title: "VectorWorld was highlighted and endorsed in a keynote by the President of Bosch Intelligent Driving Control China."
