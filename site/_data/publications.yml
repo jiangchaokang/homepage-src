@@ -9,8 +9,8 @@
   media: "/assets/media/papers/VectorWorld.gif"
   tags: ["world-model", "generative", "e2e"]
   institutions: ["Bosch China", "Research Collaboration"]
-  summary: "A streaming world model for autonomous-driving scenarios built on vector-graph diffusion flow."
-  contribution: "It aims to make future scene evolution modeling more efficient by operating on compact vectorized scene representations."
+  summary: "Rolling a driving world model forward on dense BEV rasters is expensive, which is what keeps world models out of streaming use."
+  contribution: "It runs the diffusion flow over a compact vector graph of agents and lanes instead of a dense raster, so rollout cost scales with the number of scene elements rather than with resolution — cheap enough to generate the future as a stream."
   links:
     - label: "Project Page"
       url: "https://jiangchaokang.github.io/VectorWorld/"
@@ -36,8 +36,8 @@
   media: "/assets/media/papers/paper_06_regformer.gif"
   tags: ["lidar-odometry", "perception"]
   institutions: ["Research Collaboration"]
-  summary: "A large-scale 3D LiDAR point registration network with projection-aware transformer design."
-  contribution: "It improves registration efficiency and scalability by coupling 3D point registration with projection-aware 2D transformer modeling."
+  summary: "Large-scale LiDAR registration is dominated by the cost of attention over hundreds of thousands of unordered points."
+  contribution: "It keeps the registration in 3D but moves the attention onto a range projection, so a 2D transformer carries the heavy computation while the point geometry stays exact — no voxel downsampling, no hand-built descriptors."
   links:
     - label: "PDF"
       url: "https://arxiv.org/pdf/2603.14290"
@@ -60,8 +60,8 @@
   media: "/assets/media/papers/paper_02_difflow3d.gif"
   tags: ["scene-flow", "generative", "perception"]
   institutions: ["Research Collaboration"]
-  summary: "A journal version of diffusion-based uncertainty-aware 3D scene flow estimation."
-  contribution: "It extends the diffusion formulation into a hierarchical framework for more robust and uncertainty-aware point motion estimation."
+  summary: "Scene-flow networks return one motion vector per point and no indication of when that vector should not be trusted."
+  contribution: "It refines flow as a hierarchical, coarse-to-fine diffusion process and reads per-point uncertainty directly out of that process — the journal extension of the CVPR 2024 method."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/TPAMI.2025.3629570"
@@ -78,8 +78,8 @@
   media: "/assets/media/papers/paper_09_psfnet.gif"
   tags: ["scene-flow", "lidar-odometry", "perception"]
   institutions: ["SJTU IRMV", "Research Collaboration"]
-  summary: "An unsupervised 3D scene flow learning method assisted by LiDAR odometry."
-  contribution: "It leverages odometry cues to reduce the dependency on dense point-level motion labels."
+  summary: "Point-level motion labels for LiDAR barely exist, so supervised scene flow does not scale beyond curated datasets."
+  contribution: "It supervises scene flow with LiDAR odometry instead of annotations: ego-motion already explains the rigid part of the observed flow, leaving the network to learn only the part that genuinely moves."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/TITS.2025.3538765"
@@ -96,8 +96,8 @@
   media: "/assets/media/papers/paper_04_mamba4d.gif"
   tags: ["perception", "3d-4d"]
   institutions: ["Research Collaboration"]
-  summary: "A 4D point cloud video understanding framework based on disentangled spatial-temporal state space modeling."
-  contribution: "It improves long-sequence point cloud video modeling efficiency through separate spatial and temporal sequence reasoning."
+  summary: "Attention over a 4D point-cloud video costs quadratically in sequence length, which caps how much history a model can afford to look at."
+  contribution: "It splits the spatial and temporal axes into separate state-space models, so long point-cloud videos are processed in linear time and longer histories become affordable."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/CVPR52734.2025.01642"
@@ -114,8 +114,8 @@
   media: "/assets/media/papers/GMF-Drive.gif"
   tags: ["e2e", "perception", "world-model"]
   institutions: ["Research Collaboration"]
-  summary: "An end-to-end autonomous-driving model with gated Mamba fusion and spatial-aware BEV representation."
-  contribution: "It explores sequence modeling and BEV feature fusion for integrated autonomous-driving decision pipelines."
+  summary: "In end-to-end driving stacks, BEV sensor fusion is usually the most expensive block in the network."
+  contribution: "It replaces BEV attention with a gated Mamba fusion that keeps spatial structure explicit, trading quadratic attention for linear sequence modelling at the fusion stage."
   links:
     - label: "PDF"
       url: "https://arxiv.org/pdf/2508.06113"
@@ -138,8 +138,8 @@
   media: "/assets/media/papers/D2GSLAM.gif"
   tags: ["generative", "perception", "lidar-odometry"]
   institutions: ["Research Collaboration"]
-  summary: "A dynamic SLAM framework based on 4D Gaussian splatting."
-  contribution: "It models dynamic scene structure with Gaussian representations for SLAM in changing environments."
+  summary: "Gaussian-splatting SLAM assumes a static world, so every moving object is reconstructed as an artefact smeared across the map."
+  contribution: "It gives the map a fourth dimension: dynamic content is carried by time-varying Gaussians, so moving objects are modelled explicitly instead of corrupting the static reconstruction."
   links:
     - label: "PDF"
       url: "https://arxiv.org/pdf/2512.09411"
@@ -162,8 +162,8 @@
   media: "/assets/media/papers/paper_02_difflow3d.gif"
   tags: ["scene-flow", "generative", "perception"]
   institutions: ["SJTU IRMV", "Research Collaboration"]
-  summary: "A diffusion-based 3D scene flow method for robust and uncertainty-aware point motion estimation."
-  contribution: "It formulates scene flow refinement as an iterative diffusion process to better handle uncertainty and challenging motion."
+  summary: "Single-shot scene-flow regression collapses on large or ambiguous motion, and gives no signal about which predictions are unreliable."
+  contribution: "It casts flow refinement as an iterative diffusion conditioned on the previous estimate, which recovers the motions regression averages away and yields a per-point reliability estimate as a by-product."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/CVPR52733.2024.01431"
@@ -180,8 +180,8 @@
   media: "/assets/media/papers/paper_01_3dsf_labelling.gif"
   tags: ["scene-flow", "perception", "3d-4d"]
   institutions: ["SJTU IRMV", "PhiGent Robotics", "Research Collaboration"]
-  summary: "A pseudo auto-labeling framework that provides high-quality 3D motion flow labels for LiDAR point clouds."
-  contribution: "It reduces the scarcity of point-level 3D motion labels and improves downstream scene flow estimation."
+  summary: "Point-level 3D motion is effectively impossible to annotate by hand, so scene-flow models are trained on synthetic data and then meet real LiDAR."
+  contribution: "It manufactures the missing labels from real LiDAR itself — fitting and augmenting per-object rigid motion to produce pseudo ground truth — so training happens on the same sensor and domain that deployment does."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/CVPR52733.2024.01437"
@@ -201,8 +201,8 @@
   media: "/assets/media/papers/paper_05_neurogauss4d.png"
   tags: ["generative", "perception", "3d-4d"]
   institutions: ["Research Collaboration"]
-  summary: "A 4D point cloud interpolation framework using neural fields and Gaussian deformation fields."
-  contribution: "It reconstructs temporally continuous point clouds by combining neural field representation with deformation-aware Gaussian modeling."
+  summary: "Interpolating between two LiDAR sweeps means inventing the geometry that neither sweep observed."
+  contribution: "It couples a 4D neural field with a Gaussian deformation field, so an intermediate frame is a continuous deformation of the scene rather than a per-point correspondence guess."
   links:
     - label: "DOI"
       url: "https://doi.org/10.52202/079017-2979"
@@ -222,8 +222,8 @@
   media: "/assets/media/papers/paper_07_scene_flow_on_pseudo_point.gif"
   tags: ["scene-flow", "perception"]
   institutions: ["CUMT", "SJTU IRMV"]
-  summary: "A 3D scene flow estimation study on pseudo-LiDAR point representations."
-  contribution: "It bridges image-derived pseudo-LiDAR representations and point motion estimation for 3D scene understanding."
+  summary: "Scene flow is normally treated as a LiDAR problem, which leaves camera-only platforms with no way to estimate point motion at all."
+  contribution: "It estimates 3D point motion on pseudo-LiDAR lifted from images, and characterises where that lifted geometry helps and where its depth error dominates."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/TII.2022.3210560"
@@ -240,8 +240,8 @@
   media: "/assets/media/papers/paper_08_vslam_pseudolidar.gif"
   tags: ["lidar-odometry", "perception"]
   institutions: ["CUMT", "SJTU IRMV"]
-  summary: "A visual odometry method using pseudo-LiDAR representations."
-  contribution: "It leverages pseudo-LiDAR geometry to improve visual odometry estimation."
+  summary: "Visual odometry matches features on the image plane, where scale is ambiguous and geometry has to be recovered indirectly."
+  contribution: "It lifts images into pseudo-LiDAR first and estimates pose in metric 3D, so a camera-only system can use a geometric odometry formulation."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/TIM.2023.3315416"
@@ -258,8 +258,8 @@
   media: "/assets/media/papers/paper_11_translo.gif"
   tags: ["lidar-odometry", "perception"]
   institutions: ["SJTU IRMV", "Research Collaboration"]
-  summary: "A masked point transformer framework for large-scale LiDAR odometry."
-  contribution: "It introduces window-based transformer modeling to improve LiDAR odometry scalability."
+  summary: "Point transformers do not fit a full-size LiDAR scan: global attention over every point is out of reach at scan scale."
+  contribution: "It confines attention to local windows and masks out the empty ones, which is what makes a transformer viable for odometry on complete large-scale scans."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1609/aaai.v37i2.25256"
@@ -276,8 +276,8 @@
   media: "/assets/media/papers/paper_06_regformer.gif"
   tags: ["lidar-odometry", "perception"]
   institutions: ["SJTU IRMV", "Research Collaboration"]
-  summary: "A projection-aware transformer network for large-scale point cloud registration."
-  contribution: "It improves point cloud registration by combining projection-aware representation with efficient transformer reasoning."
+  summary: "Large-scale registration pipelines lean on hand-designed keypoint detection and descriptors, and inherit their failure modes."
+  contribution: "It runs registration attention on a range-image projection of the scan, removing the keypoint-and-descriptor stage while keeping the correspondence search in 3D."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1109/ICCV51070.2023.00776"
@@ -294,8 +294,8 @@
   media: "/assets/media/papers/paper_10_sfgan.gif"
   tags: ["scene-flow", "generative", "perception"]
   institutions: ["CUMT", "SJTU IRMV"]
-  summary: "An unsupervised adversarial learning framework for 3D scene flow."
-  contribution: "It learns scene flow from self-structured 3D scene signals without dense supervised motion labels."
+  summary: "Unsupervised scene flow usually falls back on nearest-neighbour losses, which reward motion that merely lands near some point."
+  contribution: "It trains the flow adversarially against the scene's own structure: the supervision is whether the warped point cloud looks like a real scene, not whether points found a neighbour."
   links:
     - label: "DOI"
       url: "https://doi.org/10.1002/aisy.202100197"
@@ -312,8 +312,8 @@
   media: "/assets/media/papers/paper_03_icra2023_ffpanet.gif"
   tags: ["perception"]
   institutions: ["CUMT", "SJTU IRMV"]
-  summary: "A projection-aware feature fusion method for 3D object detection."
-  contribution: "It improves multi-modal 3D detection by indexing and fusing image and point cloud features more efficiently."
+  summary: "Camera-LiDAR detectors re-project between the two sensors repeatedly, and pay for it on every forward pass."
+  contribution: "It builds the pixel-to-point projection index once and reuses it, turning multi-modal fusion into a lookup rather than a repeated geometric operation."
   links:
     - label: "PDF"
       url: "https://arxiv.org/pdf/2209.07419"

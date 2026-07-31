@@ -13,7 +13,20 @@ cover_type: "video"
 featured: false
 order: 120
 rich_body: true
-summary: "A one-stage, pure-vision end-to-end driving POC that lifts 8 surround cameras into a single BEV feature, reads three structured perception heads (3D detection, HD map, occupancy) from it, predicts the next-frame BEV under generative scoring, and tokenizes everything into a Diffusion-Flow planner that emits the ego trajectory and neighbouring-agent states — perception, prediction, and planning optimised jointly."
+summary: "A one-stage, pure-vision end-to-end driving POC: eight surround cameras lifted into a single BEV feature, three perception heads and a Diffusion-Flow planner trained together, with no hand-designed 3D interface in between."
+problem: "A modular driving stack hands 3D boxes from perception to planning. That interface quantises away everything the planner was not told to expect, and it blocks gradients — so nothing downstream can tell perception what it actually needed."
+built: "One network from pixels to trajectory. Eight surround cameras are lifted into a single shared BEV feature; 3D detection, online HD mapping and 3D occupancy all read that same feature; a self-supervised next-frame BEV forecast, scored by a frozen generative prior, makes the representation carry dynamics; and everything is tokenised into a Diffusion-Flow planner that denoises the ego trajectory and its neighbours' futures together."
+result: "Perception, prediction and planning are optimised jointly: the planner's loss reaches back through the tokeniser and the BEV into the backbone, so perception is trained for what planning needs rather than for a detection benchmark."
+my_role: "I integrated the static-perception, dynamic-perception and AI-planner components into the single one-model POC, and ran the daily train / eval / visualisation loop. Wording is kept high-level for enterprise confidentiality."
+glossary:
+  - term: "BEV"
+    def: "Bird's-eye view. A top-down feature grid in ego coordinates — the common frame that lets multiple cameras and multiple tasks share one representation."
+  - term: "3D occupancy"
+    def: "A dense, class-labelled volume of what space is filled. Unlike boxes, it can describe objects with no category and no canonical shape."
+  - term: "Diffusion-Flow planner"
+    def: "A generative planner that denoises a trajectory out of noise, so genuinely ambiguous situations come out as several distinct plans rather than an averaged one."
+  - term: "One-stage"
+    def: "Perception, prediction and planning trained in a single differentiable pass, with no hand-designed 3D hand-off between them."
 privacy_note: "Bosch (XC-CN) POC. The architecture is presented at a conceptual, portfolio level; customer data, calibration, training corpora, and quantitative results are intentionally omitted or sanitized."
 atlas:
   eyebrow: "Logic map"

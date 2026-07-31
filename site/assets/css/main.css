@@ -1043,6 +1043,131 @@ body.news-collapsed .news-rail-title {
   max-width: 880px;
 }
 
+/* =====================================================================
+   Project brief — Problem / What I built / Result
+   A single 60-word sentence full of proper nouns is a memo to yourself.
+   Three labelled lines let a reader find the outcome without reading the
+   method, which is what most of them are here to do.
+   ===================================================================== */
+.proj-brief {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 900px;
+}
+
+.pb-row {
+  display: grid;
+  grid-template-columns: 8.5rem minmax(0, 1fr);
+  gap: 0.4rem 1.1rem;
+  align-items: baseline;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.pb-row:last-child { padding-bottom: 0; border-bottom: 0; }
+
+.pb-k {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--soft);
+}
+
+.pb-row p {
+  margin: 0;
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.pb-row.is-result .pb-k { color: var(--accent); }
+.pb-row.is-result p { color: var(--ink); }
+.pb-row p strong { color: var(--ink); font-weight: 800; }
+
+@media (max-width: 640px) {
+  .pb-row { grid-template-columns: 1fr; }
+}
+
+/* Jargon is unavoidable in this field; unexplained jargon is a choice. */
+.term-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1.3rem;
+}
+
+.term-chip {
+  position: relative;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px dashed var(--line);
+  background: var(--surface-soft);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: help;
+}
+
+.term-chip::after {
+  content: attr(data-def);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  z-index: 5;
+  width: max-content;
+  max-width: 20rem;
+  transform: translateX(-50%) translateY(4px);
+  padding: 0.5rem 0.68rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 0.74rem;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.term-chip:hover,
+.term-chip:focus-visible {
+  border-style: solid;
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.term-chip:hover::after,
+.term-chip:focus-visible::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.proj-role,
+.proj-relation {
+  margin: 1.4rem 0 0;
+  max-width: 900px;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.proj-role {
+  padding-left: 0.9rem;
+  border-left: 3px solid var(--accent);
+}
+
+.proj-role strong { color: var(--ink); font-weight: 800; }
+
+.proj-relation {
+  font-size: 0.9rem;
+  color: var(--soft);
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

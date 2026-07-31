@@ -837,7 +837,11 @@
   const tocList = qs("[data-toc-list]");
   if (tocShell && tocList) {
     const main = qs(".project-body-main", tocShell) || tocShell;
-    const heads = qsa("h2, h3[data-toc]", main).filter((h) => !h.closest(".atlas"));
+    // The contents list is for sections of *this* page. Site navigation ("Jump
+    // to another project") is a different mental model and belongs at the foot.
+    const heads = qsa("h2, h3[data-toc]", main).filter(
+      (h) => !h.closest(".atlas") && !h.closest(".project-nav")
+    );
     const toc = qs("[data-proj-toc]", tocShell);
 
     if (heads.length < 2) {

@@ -1,7 +1,7 @@
 ---
 title: "Generative Autonomous-Driving Simulation Platform"
-subtitle: "A Cosmos-Transfer2.5 world model turned into a production simulation platform: sensor-level 7V generation, real-map (OSM) scenarios, a WorldSim↔WorldModel gRPC bridge, the first 4-step distillation of 7V surround video, and an all-in-one OneModel that unifies layout generation, GS-fix, and harmonization."
-description: "A Cosmos-Transfer2.5-based generative simulation platform — 7V surround generation, real-map (OSM) scenarios, a WorldSim↔WorldModel gRPC bridge, 4-step video distillation, and a unified OneModel."
+subtitle: "A Cosmos-Transfer2.5 world model turned into a production simulation platform: sensor-level 7V generation, real-map scenarios, a WorldSim↔WorldModel bridge, 4-step distillation of 7V surround video, and one denoiser that serves three jobs."
+description: "A Cosmos-Transfer2.5-based generative simulation platform — 7V surround generation, real-map (OSM) scenarios, a WorldSim↔WorldModel gRPC bridge, 4-step video distillation for ~13.9× faster rollouts, and a unified OneModel."
 date_range: "2025.03–Present"
 partners: "Bosch (XC-CN)"
 role: "World Models Algorithm Engineer"
@@ -14,13 +14,38 @@ featured: true
 order: 140
 protected: true
 rich_body: true
-summary: "Built a Cosmos-Transfer2.5-based generative simulation platform: a 7V surround world model validated on internal data, real-map (Ingolstadt OSM → layout → 7V) scenario generation, a gRPC semantic bridge between WorldSim and the world model, the first 4-step distillation of 7V surround video (rCM + DMD2) for up to ~13.9× speedup, an editable platform for rare interaction data, and an all-in-one OneModel that serves layout generation, Gaussian-Splatting fix, and harmonization from a single denoiser."
+summary: "A generative simulation platform built on Cosmos-Transfer2.5: a 7-camera surround world model, real-map scenario generation, and a 4-step distilled sampler that makes surround rollouts fast enough to sit inside a closed loop."
+problem: "Real driving logs cannot cover the rare interactions that matter most, and collecting them is slow, expensive and unsafe. Generated video could fill the gap — but a 35-step surround-video diffusion model is far too slow to sit inside a closed simulation loop."
+built: "A 7-camera surround world model on Cosmos-Transfer2.5, driven by real-map layouts (Ingolstadt OSM → BEV layout → 7V video) and connected to our closed-loop simulator over a semantic bridge, so a scenario can be authored, generated and edited rather than waited for."
+result: "Four-step distillation (bridge consistency plus distribution matching) cut the sampler from 35 steps to 4 for up to <strong>~13.9× faster</strong> rollouts, and a single denoiser now serves layout generation, Gaussian-Splatting repair and harmonization instead of three separately trained models."
+my_role: "I own the distillation track end to end — schedule design, the alternating student/critic training loop, and the progressive 35→4→2→1 cascade — and the OneModel unification that collapsed three task-specific models into one. The platform itself is a team effort; scenario authoring and simulator integration are shared work."
+relation: "This platform is the parent effort. Vector Traffic Generation & Sensor-Level Closed-Loop Simulation is the track inside it that decides what the traffic does and how the result is re-rendered."
+glossary:
+  - term: "Cosmos-Transfer2.5"
+    def: "NVIDIA's video world-model backbone; the pretrained diffusion model this platform generates surround video with."
+  - term: "rCM"
+    def: "Bridge-consistency distillation: the student must reproduce the teacher's average velocity across a whole span of denoising steps, so one big step stays on the teacher's trajectory."
+  - term: "DMD2"
+    def: "Distribution Matching Distillation: a trainable critic scores the student's current samples, pushing the few-step output back toward the real data distribution and restoring sharpness."
+  - term: "OSM"
+    def: "OpenStreetMap. Real road geometry is converted into a BEV layout so generated scenarios sit on a genuine map rather than an invented one."
+  - term: "gRPC bridge"
+    def: "The semantic interface between the closed-loop simulator (WorldSim) and the world model, so simulation state and generated sensor frames can be exchanged per step."
+  - term: "Gaussian Splatting"
+    def: "An explicit 3D representation optimised from real frames; used here to render photorealistic backgrounds from viewpoints the car never actually drove."
 privacy_note: "Bosch (XC-CN) ongoing platform. Architecture, method, and the acceleration results the author measured are shown at a portfolio level; customer data, calibration, and product details are intentionally omitted or sanitized."
 atlas:
   eyebrow: "Logic map · distillation"
-  title: "35 steps → 4 steps — compress the teacher's path, keep the picture sharp"
-  caption: "A frozen teacher anchors the truth, a student learns the big strides, a dynamic critic keeps it sharp. Hover any node."
+  title: "35 steps → 4 — compress the teacher's path, keep the picture sharp"
+  caption: "Everything except the student is scaffolding: the teacher is frozen, the critic and both losses exist only during training, and only the student ships. Two losses because a big step can go wrong in two different ways — off the path, or off the data distribution."
   cols: 4
+  legend:
+    - { accent: ink, label: "Frozen teacher" }
+    - { accent: cyan, label: "Step schedule" }
+    - { accent: blue, label: "Student · path loss" }
+    - { accent: purple, label: "Critic · distribution loss" }
+    - { accent: warn, label: "Training loop" }
+    - { accent: green, label: "Shipped result" }
   nodes:
     - id: teacher
       col: 1
@@ -28,139 +53,163 @@ atlas:
       row: 1
       kind: input
       accent: ink
+      lane: prior
       tag: "Teacher"
       title: "35-step Teacher"
-      desc: "Frozen · accurate"
-      receives: "Real frames + conditions"
-      logic: "Slow, exact denoising trajectory"
-      sends: "Ground-truth path + init weights"
-      gives: "A non-drifting truth anchor"
+      desc: "Defines the trajectory to imitate"
+      spec: "35 steps · never updated"
+      receives: "Real frames and their conditions"
+      logic: "Run the slow, exact denoising trajectory"
+      sends: "Reference path plus the student's initial weights"
+      why: "Freezing the teacher gives the student a target that cannot drift; if both moved, there would be nothing anchoring the compression to reality."
     - id: student
       col: 3
       span: 2
       row: 1
       kind: process
       accent: blue
+      lane: main
+      core: true
       tag: "Student"
       title: "4-step Student"
-      desc: "Trainable · fast"
-      receives: "Teacher weights (init)"
-      logic: "Bake CFG into one forward"
+      desc: "The only model that ships"
+      spec: "4 steps · CFG baked in"
+      receives: "Teacher weights as initialisation"
+      logic: "Take four large denoising steps, with classifier-free guidance folded into a single forward"
       sends: "Few-step samples"
-      gives: "1 forward per step, not 2"
+      why: "Baking guidance into the weights removes the second forward pass per step — the speedup compounds with the step reduction rather than fighting it."
+      role: "Designed and trained the student; owned the distillation track end to end."
     - id: schedule
       col: 1
       span: 2
       row: 2
       kind: reason
       accent: cyan
+      lane: aux
       tag: "Schedule"
       title: "Sparsify Timesteps"
-      desc: "35 → 4 landing points"
-      receives: "Teacher noise levels"
-      logic: "Index-mapped sub-sampling"
-      sends: "4 student steps"
-      gives: "Each big step maps to a teacher span"
+      desc: "Choose the four landing points"
+      receives: "The teacher's noise-level schedule"
+      logic: "Index-mapped sub-sampling of the teacher's timesteps"
+      sends: "Four student steps, each covering a teacher span"
+      why: "Where the four steps land matters more than how many there are — a bad schedule wastes a step on a range where almost nothing changes."
     - id: critic
       col: 3
       span: 2
       row: 2
       kind: process
       accent: purple
+      lane: aux
       tag: "Critic"
       title: "Dynamic Critic"
-      desc: "Trainable scorer"
-      receives: "Student's current samples"
-      logic: "Score how it looks now"
-      sends: "Distribution direction"
-      gives: "Always-fresh supervision"
+      desc: "Scores the student as it is now"
+      receives: "The student's current samples"
+      logic: "Learn a score for the student's evolving output distribution"
+      sends: "A direction back toward the real distribution"
+      why: "A fixed critic goes stale the moment the student improves; retraining it alongside keeps the supervision meaningful for the whole run."
+      tradeoff: "A trainable critic doubles the moving parts — the price is the alternating loop below."
     - id: bridge
       col: 1
       span: 2
       row: 3
       kind: process
       accent: blue
+      lane: aux
       tag: "Loss · path"
       title: "Bridge Consistency"
-      desc: "Trajectory correctness"
-      receives: "Teacher span + student step"
-      logic: "Match bridge average velocity"
+      desc: "Is the big step still on the path?"
+      receives: "A teacher span and the matching student step"
+      logic: "Match the average velocity across the bridged span"
       sends: "Path gradient"
-      gives: "Big step stays on the path"
+      why: "Matching average velocity over a span, rather than the endpoint, is what lets one student step legitimately replace many teacher steps."
     - id: dmd
       col: 3
       span: 2
       row: 3
       kind: process
       accent: purple
+      lane: aux
       tag: "Loss · look"
-      title: "DMD Matching"
-      desc: "Sharpness"
-      receives: "Teacher + critic scores"
-      logic: "Push student → real distribution"
+      title: "Distribution Matching"
+      desc: "Does it still look real?"
+      receives: "Teacher and critic scores"
+      logic: "Push the student's output distribution toward the real one"
       sends: "Distribution gradient"
-      gives: "Restores few-step sharpness"
+      why: "Path correctness alone yields blurry frames; this is the loss that buys back the sharpness few-step sampling normally loses."
     - id: alt
       col: 1
       span: 4
       row: 4
       kind: process
       accent: warn
+      lane: aux
       tag: "Loop"
-      title: "Alternating Optim"
-      desc: "DMD2 / rCM"
-      receives: "Student + critic"
-      logic: "Freeze one, train the other"
-      sends: "Stable training loop"
-      gives: "Single graph → no OOM"
+      title: "Alternating Optimisation"
+      desc: "Freeze one, train the other"
+      receives: "Student and critic"
+      logic: "Update the critic and the student in alternation, never in one graph"
+      sends: "A stable training loop"
+      why: "Two adversarial-style networks in one backward graph is where 7-view video distillation runs out of memory; alternating keeps the graph small enough to fit."
+      tradeoff: "Alternating costs wall-clock steps, but it is the difference between training and not training at all at this resolution."
     - id: cascade
       col: 1
       span: 2
       row: 5
       kind: process
       accent: green
+      lane: aux
       tag: "Cascade"
-      title: "Progressive Compress"
+      title: "Progressive Compression"
       desc: "35 → 4 → 2 → 1"
-      receives: "Each level's model"
-      logic: "Halve steps, init from previous"
-      sends: "Next-level student"
-      gives: "Stable, controllable convergence"
+      receives: "The model from the previous level"
+      logic: "Halve the step count, initialise from the level above"
+      sends: "The next-level student"
+      why: "Jumping straight to one step diverges; halving keeps every level close enough to its teacher that the optimisation stays well-behaved."
     - id: fourstep
       col: 3
       span: 2
       row: 5
       kind: contribution
       accent: green
+      lane: main
+      core: true
       tag: "Result"
       title: "4-step 7V Model"
-      desc: "First of its kind"
+      desc: "Fast enough for a closed loop"
+      spec: "up to ~13.9× faster"
       media: "/assets/media/projects/gen_ad_sim/7v_distil_vis.mp4"
       media_type: video
-      receives: "Path + look gradients"
-      logic: "4 forwards, 7 views consistent"
-      sends: "Real-time surround video"
-      gives: "Up to ~13.9× faster inference"
+      receives: "Path and distribution gradients"
+      logic: "Four forward passes, seven views kept mutually consistent"
+      sends: "Surround video at interactive speed"
+      why: "Speed is not a vanity metric here: below a certain rollout time the world model simply cannot sit inside the simulation loop at all."
+      role: "Measured the speedup and integrated the distilled sampler into the platform."
   edges:
-    - { from: teacher, to: student, kind: solid }
-    - { from: teacher, to: schedule, kind: solid }
-    - { from: schedule, to: bridge, kind: flow }
-    - { from: teacher, to: bridge, kind: dashed }
-    - { from: student, to: bridge, kind: flow }
-    - { from: student, to: critic, kind: flow }
-    - { from: student, to: dmd, kind: flow }
-    - { from: teacher, to: dmd, kind: dashed }
-    - { from: critic, to: dmd, kind: dashed }
-    - { from: student, to: alt, kind: solid }
-    - { from: critic, to: alt, kind: solid }
-    - { from: bridge, to: fourstep, kind: flow }
-    - { from: dmd, to: fourstep, kind: flow }
-    - { from: fourstep, to: cascade, kind: flow }
+    - { from: teacher, to: student, kind: cond, label: "init weights" }
+    - { from: teacher, to: schedule, kind: cond }
+    - { from: schedule, to: bridge, kind: train, label: "4 spans" }
+    - { from: teacher, to: bridge, kind: train }
+    - { from: student, to: bridge, kind: train }
+    - { from: student, to: critic, kind: train }
+    - { from: student, to: dmd, kind: train }
+    - { from: teacher, to: dmd, kind: train }
+    - { from: critic, to: dmd, kind: train }
+    - { from: student, to: alt, kind: cond }
+    - { from: critic, to: alt, kind: cond }
+    - { from: bridge, to: fourstep, kind: train, label: "∇ path" }
+    - { from: dmd, to: fourstep, kind: train, label: "∇ look" }
+    - { from: fourstep, to: cascade, kind: train, label: "next level" }
 atlas2:
   eyebrow: "Logic map · OneModel"
-  title: "Three modes, one denoiser"
-  caption: "Layout generation, GS-fix, and harmonization differ only in their start latent and condition — one shared Cosmos backbone serves all three."
+  title: "Three jobs, one denoiser"
+  caption: "Layout generation, Gaussian-Splatting repair and harmonization look like three different problems. They differ only in what the sampler starts from and what it is conditioned on — so they can share one backbone."
   cols: 3
+  legend:
+    - { accent: purple, label: "Shared backbone" }
+    - { accent: blue, label: "Mode 1 · layout generation" }
+    - { accent: cyan, label: "Mode 2 · GS repair" }
+    - { accent: green, label: "Mode 3 · harmonization" }
+    - { accent: warn, label: "Shared control path" }
   nodes:
     - id: backbone
       col: 1
@@ -168,13 +217,17 @@ atlas2:
       row: 1
       kind: input
       accent: purple
+      core: true
       tag: "Backbone"
       title: "Shared Backbone"
-      desc: "Cosmos Transfer 2.5"
-      receives: "Conditions + start latent"
-      logic: "One 7V video diffusion model"
-      sends: "Same weights, three modes"
-      gives: "Train + serve once, not thrice"
+      desc: "Cosmos-Transfer2.5"
+      spec: "1 set of weights · 3 tasks"
+      receives: "Conditions and a start latent"
+      logic: "One 7-view video diffusion model"
+      sends: "The same weights, driven three ways"
+      why: "Three task-specific models meant three trainings, three checkpoints and three sets of drift. One backbone means an improvement anywhere lands everywhere."
+      tradeoff: "A shared backbone cannot be tuned to death for any single task — worth it while all three tasks are still moving."
+      role: "Designed and owned the OneModel unification."
     - id: mode1
       col: 1
       span: 1
@@ -293,14 +346,14 @@ atlas2:
       sends: "High-quality surround video"
       gives: "One model serves three tasks"
   edges:
-    - { from: backbone, to: mode1, kind: solid }
-    - { from: backbone, to: mode2, kind: solid }
-    - { from: backbone, to: mode3, kind: solid }
+    - { from: backbone, to: mode1, kind: cond }
+    - { from: backbone, to: mode2, kind: cond, label: "same weights" }
+    - { from: backbone, to: mode3, kind: cond }
     - { from: mode1, to: start1, kind: flow }
     - { from: mode2, to: start2, kind: flow }
     - { from: mode3, to: start3, kind: flow }
     - { from: start1, to: adapter, kind: flow }
-    - { from: start2, to: adapter, kind: flow }
+    - { from: start2, to: adapter, kind: flow, label: "one control path" }
     - { from: start3, to: adapter, kind: flow }
     - { from: adapter, to: denoiser, kind: flow }
     - { from: denoiser, to: out, kind: flow }
@@ -440,7 +493,7 @@ atlas2:
 
   <div class="ref-note">
     <strong>My role.</strong>
-    <span>Built the platform end-to-end: the 7V world model on Cosmos-Transfer2.5, the OSM→layout→7V pipeline, the WorldSim↔model gRPC bridge, the first 7V 4-step distillation (rCM + DMD2), the editable data platform, and the all-in-one OneModel. Numbers are the author's own measurements; details are sanitized.</span>
+    <span>Built the platform end-to-end: the 7V world model on Cosmos-Transfer2.5, the OSM→layout→7V pipeline, the WorldSim↔model gRPC bridge, the 4-step distillation of 7-camera surround video (rCM + DMD2) — to our knowledge the first in our setting — the editable data platform, and the all-in-one OneModel. Numbers are the author's own measurements; details are sanitized.</span>
   </div>
 
 </div>

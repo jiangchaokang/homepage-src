@@ -45,7 +45,33 @@ layout: default
         <h2>What is this project about?</h2>
       </div>
     </div>
-    <p class="large-text">{{ page.summary }}</p>
+
+    {% if page.problem %}
+      <div class="proj-brief">
+        <div class="pb-row"><span class="pb-k">Problem</span><p>{{ page.problem }}</p></div>
+        <div class="pb-row"><span class="pb-k">What I built</span><p>{{ page.built }}</p></div>
+        <div class="pb-row is-result"><span class="pb-k">Result</span><p>{{ page.result }}</p></div>
+      </div>
+    {% else %}
+      <p class="large-text">{{ page.summary }}</p>
+    {% endif %}
+
+    {% if page.glossary %}
+      <div class="term-row" aria-label="Key terms">
+        {% for item in page.glossary %}
+          <button class="term-chip" type="button" data-def="{{ item.def | escape }}">{{ item.term }}</button>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if page.my_role %}
+      <p class="proj-role"><strong>My role.</strong> {{ page.my_role }}</p>
+    {% endif %}
+
+    {% if page.relation %}
+      <p class="proj-relation">{{ page.relation }}</p>
+    {% endif %}
+
     {% if page.tags %}
     <div class="tag-row project-tags">
       {% for tag in page.tags %}

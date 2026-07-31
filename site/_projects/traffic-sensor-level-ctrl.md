@@ -1,6 +1,6 @@
 ---
 title: "Vector Traffic Generation & Sensor-Level Closed-Loop Simulation"
-subtitle: "Two halves of a controllable driving simulator: a structure-aware temporal vector world model that compresses and generates traffic as latents, and a sensor-level closed-loop pipeline that reconstructs, populates, and re-renders photorealistic surround video."
+subtitle: "Two halves of a controllable driving simulator: a structure-aware temporal vector world model that generates traffic as latents, and a sensor-level pipeline that reconstructs, populates and re-renders photorealistic surround video."
 description: "A two-level controllable driving simulator — a temporal vector world model that generates traffic as latents, and a sensor-level closed-loop pipeline for photorealistic re-rendering."
 date_range: "2025.05–Present"
 partners: "Bosch (XC-CN)"
@@ -13,13 +13,35 @@ cover_type: "video"
 featured: true
 order: 130
 rich_body: true
-summary: "Built a two-level controllable driving simulator: a structure-aware temporal vector VAE (STAR-AE) that compresses sparse, variable agents and lanes into fixed latents, a conditional latent-diffusion generator (STRIDENet) that produces history-consistent future traffic, and a sensor-level closed-loop WorldSim that fuses Gaussian-Splatting reconstruction, traffic-flow generation, and a mask-guided DiT video editor (built on MagicDrive-V2) into photorealistic surround rollouts."
+summary: "A two-level driving simulator: a vector world model that decides what the traffic does, and a sensor-level pipeline that decides what the cameras see — reconstruction, generated traffic, and a mask-guided video editor in one closed loop."
+problem: "A simulator has to be controllable and photorealistic at the same time. Vector simulators let you author behaviour but render nothing a perception model believes; video generators look real but cannot be steered scenario by scenario."
+built: "Two levels that meet in the middle. A structure-aware temporal autoencoder (STAR-AE) compresses variable numbers of agents and lanes into a fixed latent, and a conditional latent diffusion model (STRIDENet) rolls that latent forward into history-consistent future traffic. Beneath it, a sensor-level loop fuses Gaussian-Splatting reconstruction of the real background with the generated traffic through a mask-guided DiT video editor built on MagicDrive-V2."
+result: "Behaviour is authored as vectors and rendered as photoreal 7-camera surround video in the same loop, so a scenario can be changed at the level a person thinks about it — and the editor only regenerates the masked foreground instead of the whole frame."
+my_role: "I designed and trained the vector level — the STAR-AE latent structure and the STRIDENet conditioning — and integrated it with the sensor-level pipeline. Reconstruction and the video editor are built on shared platform components."
+relation: "This is one track inside the Generative Autonomous-Driving Simulation Platform: that project supplies the surround world model and the distilled sampler, this one supplies the traffic behaviour and the closed-loop re-rendering."
+glossary:
+  - term: "STAR-AE"
+    def: "Structure-aware temporal autoencoder. Turns a scene with a variable number of agents and lanes into a fixed-size latent, which is what makes diffusion over traffic possible at all."
+  - term: "STRIDENet"
+    def: "The conditional latent diffusion model that denoises the next traffic latent, conditioned on the observed history through adaptive layer norm."
+  - term: "Gaussian Splatting"
+    def: "An explicit 3D scene representation optimised from real frames; renders the true background from viewpoints the vehicle never drove."
+  - term: "Mask-guided DiT"
+    def: "A diffusion transformer video editor that regenerates only the masked foreground and blends the seam, instead of resynthesising the whole frame."
+  - term: "MagicDrive-V2"
+    def: "The multi-view driving video generation base this editor is built on."
 privacy_note: "Bosch (XC-CN) ongoing research. Architecture and method are presented at a portfolio level; internal data, calibration, metrics, and product details are intentionally omitted or sanitized."
 atlas:
   eyebrow: "Logic map"
   title: "Two control levels — vectors decide what happens, sensors decide what cameras see"
-  caption: "Left lane generates traffic as latents; right lane reconstructs photoreal background; both merge into a mask-guided video editor."
+  caption: "Left column generates traffic as latents; right column reconstructs the real background. They meet in a mask-guided editor, which is the only place the two levels have to agree."
   cols: 4
+  legend:
+    - { accent: cyan, label: "Real capture & reconstruction" }
+    - { accent: purple, label: "Vector compression" }
+    - { accent: blue, label: "Traffic generation" }
+    - { accent: warn, label: "Composition" }
+    - { accent: green, label: "Simulator output" }
   nodes:
     - id: scene
       col: 1
@@ -29,24 +51,27 @@ atlas:
       accent: cyan
       tag: "Input"
       title: "Driving Scene"
-      desc: "Sparse agents + lanes + sensors"
-      receives: "Real logs, HD map, sensors"
-      logic: "Split into vector + sensor levels"
-      sends: "Scene to both lanes"
-      gives: "One source, two simulators"
+      desc: "Real logs, HD map, surround sensors"
+      receives: "Recorded drives with map and sensor data"
+      logic: "Split the same scene into a vector level and a sensor level"
+      sends: "One scene into two parallel representations"
+      why: "Splitting once at the source is what allows behaviour and appearance to be controlled independently and recombined later."
     - id: starae
       col: 1
       span: 2
       row: 2
       kind: process
       accent: purple
-      tag: "VAE"
-      title: "STAR-AE VAE"
-      desc: "Structure-aware temporal"
-      receives: "Variable agents + lanes"
-      logic: "Slotify + factorized space/time attention"
+      tag: "Encode"
+      title: "STAR-AE"
+      desc: "Structure-aware temporal autoencoder"
+      spec: "variable agents → fixed latent"
+      receives: "A variable number of agents and lane elements over time"
+      logic: "Assign elements to slots, then factorise attention over space and time"
       sends: "Per-slot latents"
-      gives: "Variable scenes → fixed size"
+      why: "Diffusion needs a fixed-size, continuous space. Traffic is neither — this is the component that makes the rest of the vector level possible."
+      tradeoff: "Slots impose a ceiling on scene density; too few drops agents, too many wastes capacity on empty slots."
+      role: "Designed and trained the latent structure."
     - id: gs
       col: 3
       span: 2
@@ -55,11 +80,11 @@ atlas:
       accent: cyan
       tag: "Reconstruct"
       title: "Gaussian Splatting"
-      desc: "3D/4D · novel views"
-      receives: "Real frames + auto-labels"
-      logic: "Optimize Gaussians, render at (R,t)"
+      desc: "Real background, any viewpoint"
+      receives: "Real frames plus auto-labels"
+      logic: "Optimise Gaussians, then render at an arbitrary pose"
       sends: "Background renders"
-      gives: "Real backgrounds, any viewpoint"
+      why: "Reconstruction supplies the one thing generation is worst at: a background that is verifiably the real world, from a camera pose that was never actually driven."
     - id: latent
       col: 1
       span: 2
@@ -68,11 +93,11 @@ atlas:
       accent: purple
       tag: "Latent"
       title: "Structured Latent"
-      desc: "Fixed · samplable"
+      desc: "Fixed size, samplable"
       receives: "Encoder posteriors"
-      logic: "Reparameterize z = μ + σε"
+      logic: "Reparameterise to a continuous latent"
       sends: "Continuous latent"
-      gives: "Smooth space for diffusion"
+      why: "A smooth latent is what makes interpolation and sampling meaningful — without it, diffusion over discrete traffic has nothing to move through."
     - id: bg
       col: 3
       span: 2
@@ -81,24 +106,25 @@ atlas:
       accent: cyan
       tag: "Background"
       title: "Photoreal Background"
-      desc: "Any camera pose"
-      receives: "GS renders"
-      logic: "Free-viewpoint background"
+      desc: "Free-viewpoint plates"
+      receives: "Gaussian-Splatting renders"
+      logic: "Render the static world at the simulated pose"
       sends: "Conditioning frames"
-      gives: "Kills simulator background fakeness"
+      why: "Perception models are unusually sensitive to background realism; a synthetic background is the fastest way to make a simulator useless for closed-loop evaluation."
     - id: stridenet
       col: 1
       span: 2
       row: 4
       kind: process
       accent: blue
-      tag: "Diffusion"
+      tag: "Generate"
       title: "STRIDENet"
       desc: "Conditional latent diffusion"
-      receives: "Noised latent + history τ"
-      logic: "Denoise; AdaLN history conditioning"
-      sends: "Clean future latent"
-      gives: "History-consistent, multimodal"
+      receives: "A noised latent plus the observed history"
+      logic: "Denoise, conditioning on history through adaptive layer norm"
+      sends: "A clean future latent"
+      why: "Conditioning on history rather than on a single frame is what keeps generated traffic continuous with what already happened, instead of teleporting."
+      role: "Designed the conditioning scheme and trained the generator."
     - id: vtraffic
       col: 1
       span: 2
@@ -111,22 +137,25 @@ atlas:
       media: "/assets/media/projects/traffic_sensor_level_ctrl/gen_vector_vis.mp4"
       media_type: video
       receives: "Decoded latent"
-      logic: "AE.decode → agents + lanes"
-      sends: "What-happens layer"
-      gives: "Controllable vector traffic"
+      logic: "Decode back to agents and lanes"
+      sends: "The what-happens layer"
+      why: "Traffic stays editable as vectors right up to the moment it is rendered, which is the only level at which a scenario can actually be authored."
     - id: maskdit
       col: 1
       span: 4
       row: 6
       kind: process
       accent: warn
-      tag: "Editor"
-      title: "Mask-guided DiT"
-      desc: "Edit, don't regenerate"
-      receives: "Traffic + background"
-      logic: "Freeze bg, generate fg, fix seams"
+      core: true
+      tag: "Compose"
+      title: "Mask-guided DiT Editor"
+      desc: "Edit the frame, don't regenerate it"
+      spec: "keep · context · edge · generate"
+      receives: "Generated traffic and the reconstructed background"
+      logic: "Freeze the background, synthesise the foreground, resolve the seam"
       sends: "Edited latents"
-      gives: "Quality up, wasted compute down"
+      why: "Regenerating a whole frame throws away a background that was already correct; masking spends the model's capacity only where something actually changed."
+      tradeoff: "Masked editing depends on the mask being right — a bad boundary shows up as a visible seam rather than a soft error."
     - id: video
       col: 1
       span: 4
@@ -138,19 +167,19 @@ atlas:
       desc: "Closed-loop rollout"
       media: "/assets/media/projects/recon_gen_simulation/3.Pure_noise_gen.mp4"
       media_type: video
-      receives: "Masked flow-field update"
+      receives: "The composed latent"
       logic: "Decode to surround frames"
-      sends: "Photoreal surround video"
-      gives: "Sensor-level closed-loop sim"
+      sends: "Photorealistic surround video"
+      why: "This is the closing of the loop: the simulator's output is the same thing the perception stack consumes in the car."
   edges:
-    - { from: scene, to: starae, kind: flow }
-    - { from: scene, to: gs, kind: flow }
+    - { from: scene, to: starae, kind: flow, label: "agents + lanes" }
+    - { from: scene, to: gs, kind: flow, label: "frames + poses" }
     - { from: starae, to: latent, kind: flow }
     - { from: gs, to: bg, kind: flow }
-    - { from: latent, to: stridenet, kind: flow }
+    - { from: latent, to: stridenet, kind: flow, label: "history τ" }
     - { from: stridenet, to: vtraffic, kind: flow }
-    - { from: vtraffic, to: maskdit, kind: flow }
-    - { from: bg, to: maskdit, kind: flow }
+    - { from: vtraffic, to: maskdit, kind: flow, label: "what happens" }
+    - { from: bg, to: maskdit, kind: flow, label: "what it looks like" }
     - { from: maskdit, to: video, kind: flow }
 ---
 <div class="lawn-modules">
