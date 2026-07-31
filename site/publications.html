@@ -40,7 +40,7 @@ hide_news: true
     <article class="pub-card reveal" id="{{ pub.id }}" data-tags="{{ pub.tags | join: ' ' }}">
       <div class="pub-media">
         {% if media_ext == "mp4" or media_ext == "webm" %}
-          <video autoplay muted loop playsinline preload="metadata">
+          <video muted loop playsinline preload="none" data-autoplay-in-view>
             <source src="{{ pub.media | relative_url }}" type="video/mp4">
           </video>
         {% else %}

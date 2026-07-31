@@ -27,7 +27,7 @@ description: "Chaokang Jiang builds generative world models for autonomous drivi
   <div class="hero-duo">
     <aside class="hero-portrait reveal">
       <div class="portrait-frame spotlight-card">
-        <img class="portrait-img" src="{{ site.author.avatar | relative_url }}" alt="Portrait of Jiang Chaokang">
+        <img class="portrait-img" src="{{ site.author.avatar | relative_url }}" alt="Portrait of Jiang Chaokang" width="830" height="767" fetchpriority="high" decoding="async">
       </div>
       <ul class="portrait-tags" aria-label="Current position">
         <li>{{ site.author.role }}</li>
@@ -207,7 +207,7 @@ description: "Chaokang Jiang builds generative world models for autonomous drivi
       <article class="project-card" data-tags="{{ project.tags | join: ' ' }}">
         <div class="project-media">
           {% if project.cover_type == "video" %}
-            <video autoplay muted loop playsinline preload="metadata">
+            <video muted loop playsinline preload="none" data-autoplay-in-view>
               <source src="{{ project.cover | relative_url }}" type="video/mp4">
             </video>
           {% else %}

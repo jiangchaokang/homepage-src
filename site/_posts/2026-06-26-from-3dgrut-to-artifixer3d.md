@@ -11,8 +11,15 @@ atlas:
   variant: noir
   eyebrow: "Reasoning loop · ArtiFixer"
   title: "重建出一个一致的底，生成把它修干净，再用 3D 强行对齐——然后再修一遍"
-  caption: "主轴 ①→⑥ 是推理闭环，⑤ 画一条发光曲线回 ④ 就是题眼；下面一排是训练三阶段，权重虚线汇入 ④。Hover 任一节点看四行细节与我的判断。"
+  caption: "主轴 ①→⑥ 是推理闭环，⑤ 画一条发光曲线回 ④ 就是题眼；下面一排是训练三阶段，权重虚线汇入 ④。点击任一节点固定四行细节与我的判断。"
   cols: 8
+  legend:
+    - { accent: ink, label: "输入与评测" }
+    - { accent: blue, label: "3D 重建底座 / Stage 1" }
+    - { accent: cyan, label: "条件与 2D 修复 / Stage 3" }
+    - { accent: purple, label: "3D 仲裁 / Stage 2" }
+    - { accent: green, label: "输出" }
+    - { accent: warn, label: "数据引擎" }
   nodes:
     - id: capture
       col: 2

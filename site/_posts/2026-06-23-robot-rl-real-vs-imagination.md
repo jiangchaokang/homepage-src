@@ -12,8 +12,14 @@ atlas:
   variant: noir
   eyebrow: "Reading · RISE × π*0.6 / RECAP"
   title: "模仿撞上复合误差，分叉成两条破局路线"
-  caption: "起点是模仿学习，瓶颈是 compounding error，往下分出真实世界 RL 与想象空间 RL；底部是两条路共享的内核。Hover 看细节。"
+  caption: "起点是模仿学习，瓶颈是 compounding error，往下分出真实世界 RL 与想象空间 RL；底部是两条路共享的内核。点击任一节点固定详情。"
   cols: 4
+  legend:
+    - { accent: ink, label: "起点 · 模仿学习" }
+    - { accent: warn, label: "瓶颈" }
+    - { accent: blue, label: "路线 A · 真实世界 RL" }
+    - { accent: purple, label: "路线 B · 想象空间 RL" }
+    - { accent: cyan, label: "两条路共享的内核" }
   nodes:
     - id: imitation
       col: 1
@@ -98,6 +104,12 @@ atlas_rise:
   title: "把 RL 环境搬进想象空间"
   caption: "真实数据离线锚定 → 动态模型与价值模型分别优化 → 想象里 rollout/算优势 → 策略优化 → 真机推理零额外开销。"
   cols: 2
+  legend:
+    - { accent: warn, label: "离线真实数据" }
+    - { accent: blue, label: "动态模型 D" }
+    - { accent: purple, label: "价值模型 V" }
+    - { accent: cyan, label: "想象空间 rollout" }
+    - { accent: green, label: "策略优化与部署" }
   nodes:
     - id: rdata
       col: 1

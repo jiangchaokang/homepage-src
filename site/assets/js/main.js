@@ -833,6 +833,37 @@
     card.addEventListener("focusout", off);
   });
 
+  /* ---- Media: only decode the videos that are actually on screen ----
+     A listing page can hold a dozen looping clips. Autoplaying all of them
+     costs first-paint time and battery for footage nobody is looking at, so
+     the source is only fetched once a card enters the viewport, and playback
+     stops again when it leaves. */
+  const lazyVideos = qsa("video[data-autoplay-in-view]");
+  if (lazyVideos.length) {
+    const play = (video) => {
+      if (video.preload === "none") video.preload = "metadata";
+      if (!video.dataset.loaded) { video.load(); video.dataset.loaded = "1"; }
+      const p = video.play();
+      if (p && p.catch) p.catch(() => {});
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            if (!reduceMotion) play(video);
+            else if (!video.dataset.loaded) { video.preload = "metadata"; video.load(); video.dataset.loaded = "1"; }
+          } else if (!video.paused) {
+            video.pause();
+          }
+        });
+      }, { rootMargin: "160px 0px", threshold: 0.2 });
+      lazyVideos.forEach((video) => io.observe(video));
+    } else {
+      lazyVideos.forEach(play);
+    }
+  }
+
   const tocShell = qs("[data-proj-shell]");
   const tocList = qs("[data-toc-list]");
   if (tocShell && tocList) {

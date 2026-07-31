@@ -12,8 +12,15 @@ atlas:
   variant: noir
   eyebrow: "Data · Embodied AI"
   title: "在不可能三角上推进：保真·接触 / 规模·成本 / 跨本体，三者难以兼得"
-  caption: "左→右是时间与轻量化方向。每个节点三根竖条＝它在三角上的取舍（高＝该轴更优）。Hover 看原理·难点·判断。"
+  caption: "左→右是时间与轻量化方向。每个节点三根竖条＝它在三角上的取舍（高＝该轴更优）。点击任一节点固定原理·难点·判断。"
   cols: 6
+  legend:
+    - { accent: ink, label: "① 保真锚点" }
+    - { accent: blue, label: "② 边际成本趋零" }
+    - { accent: cyan, label: "③ 互联网级规模" }
+    - { accent: purple, label: "④ 砍掉真机" }
+    - { accent: green, label: "⑤ 人类行为级" }
+    - { accent: warn, label: "⑥ 2026 共识" }
   nodes:
     - id: teleop
       col: 1
@@ -112,6 +119,10 @@ atlas_b:
   title: "脑手协同：Ego 给全局，UMI 给末端"
   caption: "上泳道＝感知/规划（Ego），下泳道＝末端/接触（UMI），向右汇入完整具身数据。"
   cols: 2
+  legend:
+    - { accent: green, label: "Ego · 感知 / 规划" }
+    - { accent: purple, label: "UMI · 末端 / 接触" }
+    - { accent: warn, label: "汇合输出" }
   nodes:
     - id: ego2
       col: 1

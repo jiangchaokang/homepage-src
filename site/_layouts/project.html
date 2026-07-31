@@ -112,7 +112,7 @@ layout: default
       {% for media in page.gallery %}
         <figure class="gallery-item spotlight-card">
           {% if media.type == "video" %}
-            <video autoplay muted loop playsinline controls preload="metadata" disablepictureinpicture disableremoteplayback>
+            <video muted loop playsinline controls preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view>
               <source src="{{ media.src | relative_url }}" type="video/mp4">
             </video>
           {% else %}
