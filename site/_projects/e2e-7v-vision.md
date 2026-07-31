@@ -18,168 +18,198 @@ privacy_note: "Bosch (XC-CN) POC. The architecture is presented at a conceptual,
 atlas:
   eyebrow: "Logic map"
   title: "Pixels to a planned trajectory — one differentiable pass"
-  caption: "Hover a node to inspect its input, logic, output, and contribution. Lines show data flow; the planner reads one shared BEV."
-  cols: 6
+  caption: "The centre column is what runs in the car. The right lane exists only while training. The pink arrow is the point of the whole project: the planner's loss reaches all the way back into the backbone."
+  cols: 9
+  legend:
+    - { accent: cyan, label: "Sensing & perception" }
+    - { accent: purple, label: "Representation & forecast" }
+    - { accent: blue, label: "Planner interface" }
+    - { accent: green, label: "Planning & output" }
+    - { accent: warn, label: "Generative prior" }
   nodes:
     - id: cams
-      col: 2
-      span: 4
+      col: 1
+      span: 6
       row: 1
       kind: input
       accent: cyan
+      lane: main
       tag: "Input"
-      title: "8V Surround"
-      desc: "Multi-frame · pure vision"
-      receives: "8 cameras, several frames"
-      logic: "No LiDAR, no offline map"
-      sends: "Raw multi-view images"
-      gives: "Vision-only, low-cost sensing"
+      title: "8V Surround Cameras"
+      desc: "Multi-frame, vision only"
+      spec: "8 views · no LiDAR · no offline map"
+      receives: "Eight surround cameras, several consecutive frames"
+      logic: "Sample a synchronised multi-view, multi-frame clip"
+      sends: "Raw multi-view image streams"
+      why: "Cameras are the only sensor already on every trim level, so a vision-only stack is the one that can actually ship at volume."
     - id: backbone
-      col: 2
-      span: 4
+      col: 1
+      span: 6
       row: 2
       kind: process
       accent: cyan
+      lane: main
       tag: "Backbone"
       title: "Vision Backbone"
-      desc: "Cross-view + temporal"
+      desc: "Cross-view + temporal fusion"
       receives: "Per-camera image streams"
-      logic: "Cross-view attention + temporal fusion"
-      sends: "Aligned view features"
-      gives: "Motion-aware, geometry-aligned features"
+      logic: "Cross-view attention across cameras, temporal fusion across frames"
+      sends: "Geometry-aligned, motion-aware view features"
+      why: "Fusing across views and time before the lift means overlap regions and motion are resolved once, not re-derived by every downstream head."
     - id: bev
-      col: 2
-      span: 4
+      col: 1
+      span: 6
       row: 3
       kind: reason
       accent: purple
+      lane: main
+      core: true
       tag: "Lift"
-      title: "Unified BEV"
-      desc: "One shared feature hub"
-      receives: "All view features"
-      logic: "Lift perspective → bird's-eye space"
-      sends: "Single BEV feature"
-      gives: "One representation every head shares"
+      title: "Unified BEV Feature"
+      desc: "The single hub every head reads"
+      spec: "1 shared feature · 4 consumers"
+      receives: "Aligned multi-view features"
+      logic: "Lift perspective features into one bird's-eye feature volume"
+      sends: "One BEV feature, shared by every downstream branch"
+      why: "One shared hub instead of a per-task neck: the heads cannot drift apart, and adding a head costs a decoder rather than a second pyramid."
+      tradeoff: "A shared trunk means head losses compete for capacity — the joint loss weighting becomes the thing you actually tune."
+      role: "Owned the integration that made a single BEV serve static perception, dynamic perception and the planner in one model."
     - id: det
       col: 1
       span: 2
       row: 4
       kind: output
       accent: cyan
-      tag: "Head 1"
+      lane: main
+      tag: "Perception"
       title: "3D Detection"
-      desc: "Dynamic objects"
+      desc: "Dynamic agents"
       receives: "Shared BEV feature"
-      logic: "Regress 3D boxes + motion"
-      sends: "Dynamic agents"
-      gives: "Where things move"
+      logic: "Regress 3D boxes and per-object motion"
+      sends: "Dynamic agents with velocity"
+      why: "Reading boxes off the shared BEV keeps detection in the same frame as the map and the planner, so no re-projection step can lose accuracy."
     - id: map
       col: 3
       span: 2
       row: 4
       kind: output
       accent: cyan
-      tag: "Head 2"
+      lane: main
+      tag: "Perception"
       title: "Online HD Map"
       desc: "Static geometry"
       receives: "Shared BEV feature"
-      logic: "Decode lanes + topology"
-      sends: "Vectorized map"
-      gives: "No pre-built map needed"
+      logic: "Decode lane elements and their topology"
+      sends: "Vectorised local map"
+      why: "Building the map online removes the dependency on a pre-surveyed HD map, which is the single biggest cost blocker for wide deployment."
     - id: occ
       col: 5
       span: 2
       row: 4
       kind: output
       accent: cyan
-      tag: "Head 3"
+      lane: main
+      tag: "Perception"
       title: "3D Occupancy"
       desc: "Volumetric semantics"
       receives: "Shared BEV feature"
-      logic: "Dense class-labelled volume"
-      sends: "Occupied space"
-      gives: "Catches long-tail geometry"
+      logic: "Predict a dense, class-labelled occupancy volume"
+      sends: "Occupied and free space"
+      why: "Boxes cannot describe a fallen ladder or an open tailgate; a dense volume catches the long-tail geometry that boxes silently drop."
+      tradeoff: "Dense volumes are the most expensive head in the stack — resolution is traded directly against latency."
     - id: future
-      col: 1
-      span: 2
-      row: 5
+      col: 7
+      span: 3
+      row: 3
       kind: reason
       accent: purple
-      tag: "Predict"
+      lane: aux
+      tag: "Auxiliary"
       title: "Future BEV t+1"
-      desc: "Self-supervised"
+      desc: "Self-supervised forecast"
       receives: "Current BEV feature"
-      logic: "Forecast next-frame BEV"
-      sends: "Predicted BEV"
-      gives: "Encodes scene dynamics"
+      logic: "Forecast the next-frame BEV; the real next frame is the label"
+      sends: "Predicted next-frame BEV (training only)"
+      why: "Forcing the BEV to predict its own future makes it encode scene dynamics, not just a snapshot — and it costs no extra annotation."
+      tradeoff: "It is free supervision but not free compute: it is dropped at inference, so the car never pays for it."
     - id: critic
-      col: 3
-      span: 2
-      row: 5
+      col: 7
+      span: 3
+      row: 4
       kind: process
       accent: warn
-      tag: "World prior"
+      lane: prior
+      tag: "Prior"
       title: "Generative Critic"
-      desc: "Frozen, pretrained"
-      receives: "Predicted BEV"
-      logic: "Score realism of forecast"
-      sends: "Supervision signal"
-      gives: "Keeps forecasts plausible"
+      desc: "Scores how plausible a forecast is"
+      receives: "Predicted next-frame BEV"
+      logic: "Score realism against a pretrained generative prior"
+      sends: "Realism signal for the forecast loss"
+      why: "A pure regression loss lets forecasts blur into the mean; a frozen generative prior keeps them on the manifold of scenes that actually occur."
+      tradeoff: "Frozen means cheap and stable, but the prior can only judge what its pretraining covered."
     - id: tokens
-      col: 5
-      span: 2
+      col: 1
+      span: 6
       row: 5
       kind: process
       accent: blue
-      tag: "Tokenize"
+      lane: main
+      tag: "Interface"
       title: "Scene Tokens"
-      desc: "One planner language"
-      receives: "Perception + BEV"
-      logic: "Encode into token sequences"
+      desc: "One language for the planner"
+      spec: "3 heads + BEV → 1 sequence"
+      receives: "Detection, map, occupancy and the BEV feature"
+      logic: "Encode heterogeneous outputs into one token sequence"
       sends: "Conditioning tokens"
-      gives: "Unifies inputs for planning"
+      why: "Tokens replace the hand-designed 3D interface between perception and planning — the piece that normally quantises away information and blocks gradients."
     - id: plan
-      col: 2
-      span: 4
+      col: 1
+      span: 6
       row: 6
       kind: process
       accent: green
+      lane: main
+      core: true
       tag: "Plan"
       title: "Diffusion-Flow Planner"
-      desc: "Generative · multi-modal"
+      desc: "Generative, multi-modal"
       receives: "Scene tokens"
-      logic: "Denoise a trajectory from noise"
-      sends: "Plan distribution"
-      gives: "Replaces hand-tuned cost search"
+      logic: "Denoise a trajectory out of noise, conditioned on the tokens"
+      sends: "A distribution over plans, not a single guess"
+      why: "A generative planner represents genuinely ambiguous situations (yield or go) as multiple modes, where a regression planner averages them into an unsafe middle."
+      tradeoff: "Multi-step denoising costs more than a single forward pass — the step count is the knob between plan diversity and latency."
+      role: "Integrated the planner with the perception stack and ran the daily train / eval / visualisation loop for the joint model."
     - id: traj
-      col: 2
-      span: 4
+      col: 1
+      span: 6
       row: 7
       kind: contribution
       accent: green
+      lane: main
       tag: "Output"
       title: "Ego + Agent Futures"
-      desc: "Joint · scene-consistent"
+      desc: "Joint and scene-consistent"
       media: "/assets/media/projects/e2e_one_stage/E2E_vis.mp4"
       media_type: video
       receives: "Denoised plan"
-      logic: "Emit ego + neighbour states"
-      sends: "Future trajectories"
-      gives: "Pixels → planning, one network"
+      logic: "Emit the ego trajectory together with neighbouring-agent states"
+      sends: "Scene-consistent future trajectories"
+      why: "Planning the ego and its neighbours in one shot keeps the plan internally consistent — the ego cannot assume a future the other agents contradict."
   edges:
-    - { from: cams, to: backbone, kind: flow }
-    - { from: backbone, to: bev, kind: flow }
+    - { from: cams, to: backbone, kind: flow, label: "8 views · T frames" }
+    - { from: backbone, to: bev, kind: flow, label: "lift to BEV" }
     - { from: bev, to: det, kind: flow }
-    - { from: bev, to: map, kind: flow }
+    - { from: bev, to: map, kind: flow, label: "one shared feature" }
     - { from: bev, to: occ, kind: flow }
-    - { from: bev, to: future, kind: dashed }
-    - { from: future, to: critic, kind: solid }
-    - { from: det, to: tokens, kind: solid }
-    - { from: map, to: tokens, kind: solid }
-    - { from: occ, to: tokens, kind: solid }
-    - { from: bev, to: tokens, kind: dashed }
-    - { from: tokens, to: plan, kind: flow }
-    - { from: plan, to: traj, kind: flow }
+    - { from: det, to: tokens, kind: cond }
+    - { from: map, to: tokens, kind: cond, label: "3 heads → 1 sequence" }
+    - { from: occ, to: tokens, kind: cond }
+    - { from: bev, to: tokens, kind: cond }
+    - { from: tokens, to: plan, kind: flow, label: "conditioning tokens" }
+    - { from: plan, to: traj, kind: flow, label: "denoised plan" }
+    - { from: bev, to: future, kind: train, label: "next-frame target" }
+    - { from: future, to: critic, kind: train }
+    - { from: plan, to: backbone, kind: grad, label: "∇ planner loss" }
 ---
 <div class="lawn-modules">
 
