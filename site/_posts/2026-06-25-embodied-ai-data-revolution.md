@@ -219,7 +219,7 @@ atlas_b:
         <p>操作员通过主从臂、VR 或外骨骼直接驱动真机，关节角、夹爪、相机同步落盘。动作直接产生在目标本体上，没有重定向误差，保真度是所有路线里最高的。Open X-Embodiment 把 22 个平台、140 万条轨迹拼起来，训出的 RT-X 表现出约 50% 的正向跨形态迁移；DROID 又补了 7.6 万条轨迹、564 个场景。</p>
         <p>代价也最直接：成本高、依赖真机、受制于人工，对操作员还不直观、缺力反馈。更关键的是数据与本体强绑定，形成「一机一数据」的孤岛。把它当成参照系就好——保真上限高、规模上限低，后面所有路线本质都在问同一句：能不能不要真机。</p>
         <figure class="bx-video">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/embodied_ai_data/remote_data_acquisition.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/embodied_ai_data/remote_data_acquisition.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>遥操作。</strong>主从直驱真机，动作落在目标本体上——保真最高，但放不大。</figcaption>
         </figure>
       </section>
@@ -228,7 +228,7 @@ atlas_b:
         <h2>仿真：边际成本趋零，但隔着现实鸿沟</h2>
         <p>物理模拟器（Isaac Sim / MuJoCo）批量生成场景，边际成本接近零，还能安全覆盖碰撞、跌落这类长尾。对 locomotion、全身控制、导航非常好用。难点是 Sim-to-Real Gap——接触动力学、传感器噪声、光影都不好复现。判断很清楚：越是接触密集的精细操作，纯仿真越吃力，而这恰恰是后面世界模型想接管的那块。</p>
         <figure class="bx-video">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/embodied_ai_data/sim_data.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/embodied_ai_data/sim_data.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>仿真。</strong>边际成本趋零、长尾可控；接触密集任务仍隔着一道现实鸿沟。</figcaption>
         </figure>
       </section>
@@ -244,7 +244,7 @@ atlas_b:
         <p>真正的脏细节在位姿。手持设备最难的不是拍画面，而是恢复精确的 6-DoF 末端位姿——UMI 依赖 ORB-SLAM3，这是整条流水线里最脆弱的一环，尺度模糊、运动模糊会直接限制能做的任务精度。纯视觉里接触帧通常不足 10%，面对易碎、可变形物体鲁棒性不足；数据集是在斯坦福一个雨周采的，策略在强直射阳光下就不灵。</p>
         <p>领域在主动给它打补丁，这才是深度所在：FastUMI 用 RealSense T265 直接读 6-DoF 位姿，绕开笨重的离线 SLAM，FastUMI-100K 给到 10 万+ 轨迹、54 个任务；UMI-3D 把激光雷达放到末端，拿到米制尺度，让拉窗帘、开门、严重遮挡这些原本采不了的任务变得可规模采集；TacUMI 在指尖加触觉、腕部加六维力，用可锁夹爪把操作员手部施力从力数据里剔除；MV-UMI / ActiveUMI 补多视角，解决腕部视角的环境盲区。判断：UMI 的本质是在末端把动作和接触采到最准，但先天看不到全局——这是定位决定的，不是 bug。</p>
         <figure class="bx-video">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/embodied_ai_data/UMI_data.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/embodied_ai_data/UMI_data.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>UMI。</strong>手持夹爪 + 一颗相机，眼在手上→毫米级接触细节；代价是全局上下文与触觉。</figcaption>
         </figure>
       </section>
@@ -254,7 +254,7 @@ atlas_b:
         <p>戴上头显相机（Aria / Vision Pro / GoPro），用双手最自然地完成任务，记录第一人称视频、头动和 3D 手指姿态。规模上，Ego4D 约 3,670 小时，EgoDex（Apple 2025）829 小时、194 个桌面任务，是目前最大的灵巧操作数据集。</p>
         <p>最有说服力的是一个反直觉结果：EgoMimic 发现用 Aria 采的 1 小时人类第一人称手部数据，对策略性能的贡献超过多采 1 小时机器人遥操作；2 小时机器人数据加 1 小时手部数据，强于 3 小时纯机器人数据——这直接改写了成本账。方法上，EgoVLA 先在大规模人类第一人称数据上预训练，再用少量机器人演示微调，用 IK 重定向把人手动作转成机器人动作。短板也明确：具身鸿沟让直接重定向常常失败，头部相机在毫米级微操时易遮挡，人主动协调头手带来的分布偏移机器人复刻不了。判断：Ego 把脑/小脑那层采得最全，末端精度和接触正好是它的缺口——和 UMI 互补。</p>
         <figure class="bx-video">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/embodied_ai_data/Ego_data.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/embodied_ai_data/Ego_data.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>Ego。</strong>第一人称带来全局上下文、任务规划与真实手感，外加失败/恢复的闭环数据。</figcaption>
         </figure>
       </section>
@@ -265,7 +265,7 @@ atlas_b:
         <p class="bx-eq">完整具身数据　＝　<b>Ego</b>（全局环境与任务规划）<span class="eq-arrow">＋</span><span class="eq-cyan">UMI</span>（末端精细操作与接触控制）</p>
         {% include logic-atlas.html atlas=page.atlas_b %}
         <figure class="bx-video is-wide">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/embodied_ai_data/egoguide_umi.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/embodied_ai_data/egoguide_umi.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>Ego + UMI 融合。</strong>头上采全局与意图，手上采动作与接触——两条信息流汇成一条闭环。</figcaption>
         </figure>
       </section>

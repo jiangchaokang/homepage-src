@@ -107,7 +107,7 @@ cover: "/assets/media/blog/icml2026_seoul/VectorWorld_Spotlight_Poster_LiveExcha
         <h2>The most striking demo on the floor</h2>
         <p>My own footage, from the <a href="https://mira-wm.com/" target="_blank" rel="noopener">MIRA</a> booth: a real-time, four-player world model by General Intuition, Kyutai, and Epic Games, generating a driving game live from nothing but controller input — no engine, no renderer, just a model predicting what comes next, smoothly enough that you forget it is being generated at all. It was the clearest proof on the floor that "real-time, interactive world model" is no longer a future-tense claim.</p>
         <figure class="bx-video is-wide">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/icml2026_seoul/mira-wm.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/icml2026_seoul/mira-wm.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>MIRA.</strong> Four players, one neural network — a playable driving world generated live, frame by frame, no game engine involved.</figcaption>
         </figure>
       </section>

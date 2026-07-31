@@ -275,7 +275,7 @@ atlas_rise:
         </div>
         <p>模型这边，π0.6 是基于 5B 参数视觉语言模型加动作专家的 VLA，支持异质 prompt（文本指令加执行质量/优势标注）。补充几个 model card 上的细节：Gemma 3 4B 骨干、860M 动作专家、用 flow matching 生成连续动作。结果给具体数字：最难任务上吞吐量翻倍以上、失败率降低 2 倍以上；espresso 从连续 5 分半做到 23 分半，在新家折叠 50 件新衣物，在工厂组装并贴标 59 个真实包装盒，难任务成功率超过 90%。</p>
         <figure class="bx-video is-wide">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/rise_pi06/pi06.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/rise_pi06/pi06.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>RECAP 整体框架。</strong>奖励反馈加专家干预，把演示、自主经验、纠错三类数据拧成一条优势条件化的监督学习。</figcaption>
         </figure>
       </section>
@@ -285,13 +285,13 @@ atlas_rise:
         <p>RISE 面对同一个根问题——接触密集、动态任务里偏差会复合成失败——但攻的是另一个瓶颈：真机在线 RL 受限于安全风险、硬件成本和环境重置。试错、人工重置、再试，这个循环慢、贵、有风险。</p>
         <p>核心做法是把 RL 环境从物理世界搬进想象空间，用一个组合式世界模型（Compositional World Model）：一个可控的动态模型，基于高效视频扩散预测多视角未来画面；一个进度敏感的价值模型，评估想象出来的状态、产出优势。两个模块各自用最合适的架构和目标独立优化——这正是「组合式」的含义，也是它的好处。</p>
         <figure class="bx-video is-wide">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/rise_pi06/rise_methodology_Compositional_world_model.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/rise_pi06/rise_methodology_Compositional_world_model.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>组合式世界模型。</strong>动态模型负责想象未来，价值模型负责评估优势，两者分头优化、再合到一起。</figcaption>
         </figure>
         {% include logic-atlas.html atlas=page.atlas_rise %}
         <p>自改进是一个闭环：Rollout 阶段，策略以最优优势为条件，在世界模型里交互产生 rollout 数据；Training 阶段，behavior policy 在优势条件化方案下训练。整个过程不碰真机，真机推理也零额外开销。关键设计来自消融——offline 数据占比 0.6 最优，用真实数据把策略锚住，防止它在想象里钻世界模型的空子、漂移掉；online 的 action 与 state 也都不可或缺。</p>
         <figure class="bx-video is-wide">
-          <video autoplay muted loop playsinline preload="metadata" disablepictureinpicture disableremoteplayback><source src="{{ '/assets/media/blog/rise_pi06/rise_self_improve_loop.mp4' | relative_url }}" type="video/mp4"></video>
+          <video muted loop playsinline preload="none" disablepictureinpicture disableremoteplayback data-autoplay-in-view><source src="{{ '/assets/media/blog/rise_pi06/rise_self_improve_loop.mp4' | relative_url }}" type="video/mp4"></video>
           <figcaption><strong>自改进闭环。</strong>在想象空间里 rollout、算优势、更新策略，再回到 rollout——真机不参与。</figcaption>
         </figure>
         <p>结果同样给绝对成功率的提升：相对此前方法，dynamic brick sorting 提升 35%、backpack packing 提升 45%、box closing 提升 35%。对照的基线包含 RECAP、π0.5 以及 π0.5+DSRL。</p>

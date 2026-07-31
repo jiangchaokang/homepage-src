@@ -29,7 +29,7 @@ hide_news: true
     <article class="post-card reveal" data-tags="{{ post.category }} {{ kind }}" data-accent="{{ cat.accent | default: 'accent' }}">
       <a class="post-card-media" href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
         {% if post.cover_type == "video" %}
-          <video autoplay muted loop playsinline preload="metadata"{% if post.poster %} poster="{{ post.poster | relative_url }}"{% endif %}>
+          <video muted loop playsinline preload="none" data-autoplay-in-view{% if post.poster %} poster="{{ post.poster | relative_url }}"{% endif %}>
             <source src="{{ post.cover | relative_url }}" type="video/mp4">
           </video>
         {% elsif post.cover %}
