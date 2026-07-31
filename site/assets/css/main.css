@@ -2650,6 +2650,47 @@ a.feature-card:hover::after {
   font-weight: 600;
 }
 
+/* The first line the reader meets has to be verifiable, not aspirational. */
+.hero-proof {
+  margin: 1rem 0 0;
+  max-width: 66ch;
+  color: var(--muted);
+  font-size: clamp(0.95rem, 1.25vw, 1.06rem);
+  line-height: 1.6;
+}
+
+.hero-proof strong {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.hero-badges {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+}
+
+.hero-badges li {
+  padding: 0.32rem 0.72rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.hero-badges li:first-child {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 .hero-duo {
   display: grid;
   grid-template-columns: minmax(200px, 0.68fr) minmax(0, 1.32fr);

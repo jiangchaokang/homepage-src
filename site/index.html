@@ -1,15 +1,27 @@
 ---
 layout: default
 title: "Home"
-description: "Jiang Chaokang — World Models Algorithm Engineer focused on generative autonomous driving, 3D/4D perception, scene flow, LiDAR odometry, and engineering systems."
+seo_title: "Chaokang Jiang — World Models & Generative Driving"
+description: "Chaokang Jiang builds generative world models for autonomous driving: a 7-camera surround world model distilled to 4 steps for closed-loop simulation at Bosch, end-to-end driving, and 3D/4D perception shipped on production platforms."
 ---
 <section class="hero">
   <div class="hero-headline reveal">
-    <p class="eyebrow">World Models · Generative Driving · 3D/4D Perception</p>
     <h1 class="hero-title">
-      Hi, I'm Jiang Chaokang <span class="hero-cn">(蒋超康)</span>.
-      <span class="hero-line">I work toward advancing <span class="grad">generative world models</span>.</span>
+      Jiang Chaokang <span class="hero-cn">(蒋超康)</span>
+      <span class="hero-line">I build <span class="grad">generative world models</span> and put them in a closed loop.</span>
     </h1>
+    <p class="hero-proof">
+      A 7-camera surround world model, compressed from 35 denoising steps to 4 for up to
+      <strong>~13.9× faster</strong> rollouts, now driving a sensor-level closed-loop simulator at
+      Bosch — alongside perception that runs on production autonomous-driving platforms.
+    </p>
+    <ul class="hero-badges" aria-label="Selected credentials">
+      <li>ICML 2026 · Spotlight</li>
+      <li>T-PAMI</li>
+      <li>CVPR</li>
+      <li>7V surround world model</li>
+      <li>Production AD perception</li>
+    </ul>
   </div>
 
   <div class="hero-duo">
@@ -17,27 +29,25 @@ description: "Jiang Chaokang — World Models Algorithm Engineer focused on gene
       <div class="portrait-frame spotlight-card">
         <img class="portrait-img" src="{{ site.author.avatar | relative_url }}" alt="Portrait of Jiang Chaokang">
       </div>
-      <ul class="portrait-tags" aria-label="Focus areas">
-        <li>Closed-loop Driving Simulation</li>
-        <li>Generative Models</li>
-        <li>End-to-End Driving</li>
-        <li>3D / 4D Perception</li>
+      <ul class="portrait-tags" aria-label="Current position">
+        <li>{{ site.author.role }}</li>
+        <li>{{ site.author.company }}, {{ site.author.location }}</li>
       </ul>
     </aside>
 
     <div class="hero-about reveal">
       <p class="about-bio">
-        Hello, I'm <strong>Jiang Chaokang (蒋超康)</strong> — born in 1998 in Henan, China, and now a
-        World Models Algorithm Engineer at Bosch China. I received my Master of Engineering in 2023
+        Born in 1998 in Henan, China. I received my Master of Engineering in 2023
         through a joint program (2020–2023) between the China University of Mining and Technology and
         Shanghai Jiao Tong University, where I was fortunate to be advised by Prof. Hesheng Wang and
         Prof. Yanzi Miao, and to build multi-year collaborations with
-        <a href="https://irmv.sjtu.edu.cn/cn" target="_blank" rel="noopener">Dr. Guangming Wang</a> (Cambridge)
-        and <a href="https://liujiuming123.github.io/" target="_blank" rel="noopener">Dr. Jiuming Liu</a> (Cambridge),
-        among others. At the
+        <a href="https://irmv.sjtu.edu.cn/cn" target="_blank" rel="noopener">Dr. Guangming Wang</a>
+        and <a href="https://liujiuming123.github.io/" target="_blank" rel="noopener">Dr. Jiuming Liu</a>,
+        both now at Cambridge. At the
         <a href="https://irmv.sjtu.edu.cn/cn" target="_blank" rel="noopener">SJTU IRMV Lab</a>
-        I contributed to engineering projects such as a lawn-mowing robot and a 4D auto-labeling system.
-        After graduating, I worked at PhiGent Robotics in Beijing (2023.06–2025.03).
+        I worked on a 4D auto-labeling system and a lawn-mowing robot — my first experience of shipping
+        perception onto real hardware rather than a benchmark.
+        I then spent 2023.06–2025.03 at PhiGent Robotics in Beijing before joining Bosch China.
       </p>
 
       <div class="about-contact" aria-label="Contact channels">
@@ -97,8 +107,9 @@ description: "Jiang Chaokang — World Models Algorithm Engineer focused on gene
       </a>
       <p class="start-tagline">Scene flow, LiDAR odometry, 3D/4D perception, world models, and generative driving.</p>
       <details class="start-more">
-        <summary>What's inside</summary>
-        <p>A structured, filterable list where each card keeps the explanation short — one sentence for the problem and one for the core contribution — with verified PDF, arXiv, DOI, code, and project-page links.</p>
+        <summary>How papers are listed</summary>
+        <p>A filterable list where every card stays two sentences: one for the problem, one for the core
+        contribution. Each entry carries verified PDF, arXiv, DOI, code, and project-page links.</p>
       </details>
     </article>
 
@@ -117,8 +128,9 @@ description: "Jiang Chaokang — World Models Algorithm Engineer focused on gene
       </a>
       <p class="start-tagline">Autonomous-driving, robotics, auto-labeling, deployment, and data-generation systems.</p>
       <details class="start-more">
-        <summary>What's inside</summary>
-        <p>Each project is an independent, sanitized page covering context, role, the core algorithmic pipeline, and on-vehicle results — kept high-level for enterprise confidentiality.</p>
+        <summary>What each project page shows</summary>
+        <p>Problem, what I built, and the measured result — then an interactive logic map of the
+        architecture. Enterprise work is sanitized and kept high-level.</p>
       </details>
     </article>
 
@@ -137,8 +149,9 @@ description: "Jiang Chaokang — World Models Algorithm Engineer focused on gene
       </a>
       <p class="start-tagline">Notes on models, systems, deployment, and research practice.</p>
       <details class="start-more">
-        <summary>What's inside</summary>
-        <p>A personal blog for durable notes — model design, system trade-offs, deployment lessons, and engineering judgment captured over the long term.</p>
+        <summary>What I write about</summary>
+        <p>Durable notes rather than news: model design, system trade-offs, deployment lessons, and the
+        judgement calls behind them.</p>
       </details>
     </article>
   </div>

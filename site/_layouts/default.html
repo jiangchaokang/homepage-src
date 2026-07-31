@@ -18,11 +18,15 @@
       } catch (e) {}
     })();
   </script>
-  {% if page_title == site.title %}
+  {% if page.seo_title %}
+    <title>{{ page.seo_title }}</title>
+  {% elsif page_title == site.title %}
     <title>{{ site.title }} — {{ site.tagline }}</title>
   {% else %}
     <title>{{ page_title }} — {{ site.title }}</title>
   {% endif %}
+  {%- assign share_title = page.share_title | default: page.seo_title | default: page.title | default: site.title -%}
+  {%- assign share_image = page.og_image | default: "/assets/img/chaokang_jiang/og-card.png" -%}
   <meta name="description" content="{{ meta_description }}">
   <meta name="author" content="{{ site.author.name }}">
   <meta name="theme-color" content="#101114">
@@ -31,31 +35,44 @@
   <link rel="icon" type="image/svg+xml" href="{{ site.author.logo | relative_url }}">
   <link rel="icon" type="image/png" href="{{ site.author.favicon | relative_url }}">
   <link rel="apple-touch-icon" href="{{ site.author.favicon | relative_url }}">
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
   <meta property="og:site_name" content="{{ site.title }}">
-  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="{{ share_title }}">
   <meta property="og:description" content="{{ meta_description }}">
   <meta property="og:url" content="{{ page.url | absolute_url }}">
-  <meta property="og:image" content="{{ site.author.avatar | absolute_url }}">
+  <meta property="og:image" content="{{ share_image | absolute_url }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ share_title }} — {{ site.author.name }}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{ page_title }}">
+  <meta name="twitter:title" content="{{ share_title }}">
   <meta name="twitter:description" content="{{ meta_description }}">
-  <meta name="twitter:image" content="{{ site.author.avatar | absolute_url }}">
+  <meta name="twitter:image" content="{{ share_image | absolute_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Person",
     "name": {{ site.author.name | jsonify }},
+    "alternateName": ["Chaokang Jiang", {{ site.author.name_cn | jsonify }}],
     "jobTitle": {{ site.author.role | jsonify }},
+    "image": {{ site.author.avatar | absolute_url | jsonify }},
     "worksFor": {
       "@type": "Organization",
       "name": {{ site.author.company | jsonify }}
     },
+    "alumniOf": [
+      { "@type": "CollegeOrUniversity", "name": "Shanghai Jiao Tong University" },
+      { "@type": "CollegeOrUniversity", "name": "China University of Mining and Technology" }
+    ],
     "email": {{ site.author.email | jsonify }},
     "url": {{ site.url | jsonify }},
     "sameAs": [
-      {{ site.author.github | jsonify }}
+      {{ site.author.github | jsonify }},
+      {{ site.author.scholar | jsonify }},
+      {{ site.author.x | jsonify }},
+      {{ site.author.openreview | jsonify }}
     ],
     "knowsAbout": [
       "World Models",
@@ -68,6 +85,31 @@
     ]
   }
   </script>
+  {%- if page.url == "/publications/" %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Publications by Chaokang Jiang",
+    "itemListElement": [
+      {%- for pub in site.data.publications %}
+      {
+        "@type": "ListItem",
+        "position": {{ forloop.index }},
+        "item": {
+          "@type": "ScholarlyArticle",
+          "name": {{ pub.title | jsonify }},
+          "author": [{% assign names = pub.authors | split: ", " %}{% for a in names %}{ "@type": "Person", "name": {{ a | jsonify }} }{% unless forloop.last %}, {% endunless %}{% endfor %}],
+          "datePublished": "{{ pub.year }}",
+          "publisher": {{ pub.venue | jsonify }},
+          "url": "{{ '/publications/#' | append: pub.id | absolute_url }}"
+        }
+      }{% unless forloop.last %},{% endunless %}
+      {%- endfor %}
+    ]
+  }
+  </script>
+  {%- endif %}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -232,7 +274,7 @@
         </button>
 
         <div class="news-panel">
-          <p class="rail-eyebrow"><span class="news-live" aria-hidden="true"></span>Latest Signal</p>
+          <p class="rail-eyebrow"><span class="news-live" aria-hidden="true"></span>Recent highlights</p>
 
           <div class="news-scroll" data-news-scroll>
             <ol class="rail-news-list" data-news-track>
