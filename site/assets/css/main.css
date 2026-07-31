@@ -4082,7 +4082,7 @@ body.lightbox-open {
   --at-border: rgba(255, 255, 255, 0.14);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(258px, 318px);
-  grid-template-areas: "bar bar" "stage panel" "legend legend" "table table";
+  grid-template-areas: "bar bar" "stage panel";
   gap: 1.1rem 1.3rem;
   margin: 1.6rem 0;
   padding: clamp(1rem, 2.4vw, 1.5rem);
@@ -4172,6 +4172,17 @@ body.lightbox-open {
   height: 100%;
   z-index: 1;
   pointer-events: none;
+  overflow: visible;
+}
+
+.atlas-edges path {
+  fill: none;
+  stroke: var(--at-line);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transition: stroke 220ms ease, stroke-width 220ms ease, opacity 220ms ease;
+}
+
 /* Edge vocabulary — every stroke style is explained by the legend below the map.
    flow  = data that moves at inference time (animated march)
    cond  = conditioning / structural link (plain line)
@@ -4190,8 +4201,10 @@ body.lightbox-open {
   animation: atlasFlowBack 1.5s linear infinite;
 }
 .atlas-edges .edge-head.kind-grad { fill: var(--at-pink, #ff7ab6); }
+
 @keyframes atlasFlow { to { stroke-dashoffset: -28; } }
 @keyframes atlasFlowBack { to { stroke-dashoffset: 26; } }
+
 .atlas-edges.has-dim path { opacity: 0.14; }
 .atlas-edges path.is-lit {
   opacity: 1;
@@ -4215,16 +4228,7 @@ body.lightbox-open {
   transition: fill 220ms ease, opacity 220ms ease;
 }
 .atlas-edges.has-dim .edge-label:not(.is-lit) { opacity: 0.16; }
-.atlas-edges .edge-label.is-lit { fill: var(--at-cyan)
-.atlas-edges path.is-lit {
-  opacity: 1;
-  stroke: var(--at-cyan);
-  stroke-width: 2.6;
-  filter: drop-shadow(0 0 5px rgba(56, 225, 239, 0.55));
-}
-.atlas-edges .edge-head { fill: var(--at-line); transition: fill 220ms ease; }
-.atlas-edges .edge-head.is-lit { fill: var(--at-cyan); }
-.atlas-edges.has-dim .edge-head:not(.is-lit) { opacity: 0.14; }
+.atlas-edges .edge-label.is-lit { fill: var(--at-cyan); }
 
 /* ---- Node grid ---- */
 .atlas-grid {
@@ -4505,9 +4509,12 @@ body.lightbox-open {
 .ap-media video, .ap-media img { display: block; width: 100%; height: auto; }
 
 /* ---- Legend ---- : any diagram that encodes meaning in colour or stroke has to
-   say so explicitly, otherwise the reader is guessing. */
+   say so explicitly, otherwise the reader is guessing.
+   Placed by spanning every column rather than by a named area: a named area that
+   the template forgets to declare silently falls back to auto-placement and lands
+   in the narrow panel column, so `1 / -1` is the safer instruction. */
 .atlas-legend {
-  grid-area: legend;
+  grid-column: 1 / -1;
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem 1.4rem;
@@ -4565,7 +4572,7 @@ body.lightbox-open {
 /* ---- Table fallback ---- : keyboard, screen-reader, print and search-engine
    friendly. Everything the hover panel says, as plain indexable text. */
 .atlas-table {
-  grid-area: table;
+  grid-column: 1 / -1;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.022);
@@ -4598,16 +4605,26 @@ body.lightbox-open {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.78rem;
-  min-width: 640px;
+  /* Deliberate proportions: the rationale column carries three sentences and the
+     rest carry a phrase each. Without this the browser gives every column an
+     equal share and shreds the prose into one word per line. */
+  table-layout: fixed;
+  min-width: 760px;
 }
+.atlas-table col.c-stage { width: 15%; }
+.atlas-table col.c-in { width: 17%; }
+.atlas-table col.c-logic { width: 20%; }
+.atlas-table col.c-out { width: 17%; }
+.atlas-table col.c-why { width: 31%; }
 .atlas-table th,
 .atlas-table td {
   text-align: left;
   vertical-align: top;
-  padding: 0.5rem 0.7rem 0.5rem 0;
+  padding: 0.55rem 1rem 0.55rem 0;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--at-muted);
+  overflow-wrap: break-word;
 }
 .atlas-table thead th {
   border-top: 0;
@@ -4616,7 +4633,7 @@ body.lightbox-open {
   text-transform: uppercase;
   color: var(--at-soft);
 }
-.atlas-table tbody th { color: var(--at-ink); min-width: 9.5rem; }
+.atlas-table tbody th { color: var(--at-ink); }
 .atlas-table tbody th b { display: block; font-weight: 750; }
 .atlas-table .atr-tag {
   display: inline-block;
@@ -4637,7 +4654,7 @@ body.lightbox-open {
 @media (max-width: 900px) {
   .atlas {
     grid-template-columns: 1fr;
-    grid-template-areas: "bar" "stage" "panel" "legend" "table";
+    grid-template-areas: "bar" "stage" "panel";
   }
   .atlas-panel { position: static; }
 }
@@ -4717,7 +4734,7 @@ body.lightbox-open {
 @media (max-width: 760px) {
   .atlas {
     grid-template-columns: 1fr;
-    grid-template-areas: "bar" "stage" "panel" "legend" "table";
+    grid-template-areas: "bar" "stage" "panel";
   }
   .atlas-stage {
     overflow-x: auto;

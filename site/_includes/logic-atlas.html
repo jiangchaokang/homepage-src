@@ -159,6 +159,9 @@
     <div class="atlas-table-scroll">
       <table>
         <caption class="visually-hidden">{{ atlas.title | default: "Logic map" }} — every node with its input, logic and output.</caption>
+        <colgroup>
+          <col class="c-stage"><col class="c-in"><col class="c-logic"><col class="c-out"><col class="c-why">
+        </colgroup>
         <thead>
           <tr><th scope="col">Stage</th><th scope="col">Input</th><th scope="col">Logic</th><th scope="col">Output</th><th scope="col">Why / role</th></tr>
         </thead>

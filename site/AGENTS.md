@@ -170,8 +170,19 @@ Use local assets. Do not introduce external CSS/JS/CDN dependencies unless expli
 Before publishing:
 
 - Run `cd site && bundle exec jekyll build --trace`.
+- Run `cd site && python3 tools/check-css.py`.
 - Open Home, Publications, Projects, Blog, Contact.
 - Check mobile layout.
 - Check all media paths.
 - Check external paper links.
 - Confirm enterprise descriptions are sanitized.
+
+### Why the CSS check matters
+
+Jekyll copies `assets/css/main.css` verbatim and never parses it. A single
+unclosed brace therefore produces a **completely clean build** and a **destroyed
+site**: browsers discard every rule after the parse error, so the page silently
+loses hundreds of rules and the layout collapses. This has happened once, from an
+in-place string edit that ate a closing brace. `tools/check-css.py` catches
+unbalanced braces and declarations missing a semicolon before the next rule.
+Always run it after editing CSS — the build passing tells you nothing.
