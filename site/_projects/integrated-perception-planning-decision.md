@@ -13,13 +13,24 @@ cover_type: "image"
 featured: false
 order: 30
 rich_body: true
-summary: "A unified multi-task framework that fuses multi-modal sensors (RGB, LiDAR, infrared) through attention-based feature fusion — jointly solving geometric–semantic mapping, unsupervised depth and odometry, multi-object detection and tracking, and closed-loop behavior decisions inside one end-to-end trainable network."
+summary: "A single end-to-end network that fuses RGB, LiDAR and infrared through attention, then jointly solves geometry–semantic mapping, unsupervised depth and odometry, detection and tracking, and closed-loop behaviour decisions."
+problem: "Perception, mapping, planning and decision-making are normally four codebases with four interfaces, and every interface is a place where information is lost and errors accumulate."
+built: "One end-to-end trainable network. Heterogeneous sensors (RGB, LiDAR, infrared) fuse through cross- and self-attention into a shared representation; detection and tracking, unsupervised depth and odometry, dense SLAM, path planning and a decision layer all read from it."
+result: "Because the chosen action changes what the sensors observe next, the system is a genuine closed loop rather than a pipeline — and all four abilities are optimised against the same representation instead of against four separate proxies."
+my_role: "Perception and simulation developer: the multi-modal fusion, the perception branches, and the simulation environment used to close the loop."
 privacy_note: "Only high-level system modules are shown. Mission-specific and customer-specific details are omitted."
 atlas:
   eyebrow: "Logic map"
   title: "One model, four abilities, one closed loop"
-  caption: "Heterogeneous sensors fuse into a shared representation that drives perception, mapping, planning, and decisions — then the action loops back. Hover a node."
+  caption: "Heterogeneous sensors fuse into one shared representation that drives perception, mapping, planning and decisions — and the chosen action changes what the sensors see next, which is what makes it a loop rather than a pipeline."
   cols: 4
+  legend:
+    - { accent: ink, label: "Sensing" }
+    - { accent: purple, label: "Shared fusion" }
+    - { accent: cyan, label: "Perception" }
+    - { accent: blue, label: "Mapping" }
+    - { accent: warn, label: "Planning" }
+    - { accent: green, label: "Decision" }
   nodes:
     - id: sensors
       col: 1
@@ -118,10 +129,10 @@ atlas:
     - { from: fusion, to: estimate, kind: flow }
     - { from: detect, to: slam, kind: flow }
     - { from: estimate, to: slam, kind: flow }
-    - { from: detect, to: planning, kind: solid }
+    - { from: detect, to: planning, kind: cond }
     - { from: slam, to: planning, kind: flow }
     - { from: planning, to: decision, kind: flow }
-    - { from: decision, to: sensors, kind: dashed }
+    - { from: decision, to: sensors, kind: loop, label: "act → observe" }
 ---
 <div class="lawn-modules">
 

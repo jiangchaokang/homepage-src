@@ -13,13 +13,23 @@ cover_type: "image"
 featured: true
 order: 40
 rich_body: true
-summary: "The robot has to drive itself off a transport vehicle, reach the lawn, mow, and return — so I built its safety-critical perception stack across four modules: ramp detection for self loading/unloading, 3D grass-obstacle detection (geometry first, then camera–LiDAR fusion), an MCU-deployed 2D BEV safety detector, and a dual-attention LiDAR–vision fusion study."
+summary: "The safety-critical perception stack for a robot that has to drive itself off a transport vehicle, reach the lawn, mow it, and come back — four modules from ramp detection to an MCU-deployed BEV safety net."
+problem: "A consumer mowing robot operates unsupervised around people and pets, on a compute budget of a microcontroller. Every stage of its mission — unloading itself, crossing to the lawn, mowing, returning — has its own way of going wrong, and the whole thing has to be safe by default."
+built: "Four modules on one shared sensor set. Ramp detection so the robot can load and unload itself; 3D grass-obstacle detection, first geometric and then camera–LiDAR fused; a 2D BEV safety detector small enough to run on the on-board MCU; and a dual-attention LiDAR–vision fusion study for the next generation."
+result: "The safety detector runs at roughly 110 fps on an STM32H7, so the safety net is always on rather than budget-dependent — and obstacle detection moved from geometry-only to fused perception without changing the sensor set."
+my_role: "Perception algorithm developer across all four modules; the dual-attention fusion work was a research study that informed the next version rather than shipping."
 privacy_note: "Only high-level algorithmic information is shown. Thresholds listed here are illustrative; product parameters, calibration data, and deployment details are sanitized."
 atlas:
   eyebrow: "Logic map"
   title: "From the transport vehicle to the lawn and back — one safety stack"
-  caption: "Every mission stage hangs off the same sensors and feeds one outcome: safe autonomous mowing. Hover a node."
+  caption: "Every mission stage hangs off the same two sensors and feeds one outcome. Three stages shipped on the robot; the fusion study informed the next version rather than being deployed."
   cols: 4
+  legend:
+    - { accent: ink, label: "On-robot sensing" }
+    - { accent: cyan, label: "Ramp detection · load & unload" }
+    - { accent: blue, label: "MCU safety net" }
+    - { accent: green, label: "Obstacle detection & mission outcome" }
+    - { accent: purple, label: "Fusion study · research, not deployed" }
   nodes:
     - id: sensors
       col: 1
@@ -103,8 +113,8 @@ atlas:
     - { from: sensors, to: ramp, kind: flow }
     - { from: sensors, to: embedded, kind: flow }
     - { from: sensors, to: obstacle, kind: flow }
-    - { from: fusion, to: obstacle, kind: dashed }
-    - { from: ramp, to: safe, kind: solid }
+    - { from: fusion, to: obstacle, kind: cond, label: "informs V2" }
+    - { from: ramp, to: safe, kind: cond }
     - { from: embedded, to: safe, kind: flow }
     - { from: obstacle, to: safe, kind: flow }
 ---

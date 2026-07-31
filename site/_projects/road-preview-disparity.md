@@ -13,7 +13,11 @@ cover_type: "video"
 featured: false
 order: 60
 rich_body: true
-summary: "A road-surface perception project for the road-preview ('magic-carpet') suspension feature: segment safety-critical small road elements — manhole covers and speed bumps — reliably under hard real-world conditions (tiny targets, water and oil stains, textureless surfaces), then compress and quantize the model to INT8 for efficient TDA4 edge inference, reaching an initial mass-production quality bar."
+summary: "Road-surface perception for a road-preview ('magic-carpet') suspension feature: segment manhole covers and speed bumps reliably in the wild, then compress and quantize the model to INT8 for TDA4 edge inference."
+problem: "A preview-controlled suspension has to know about a speed bump before the wheel reaches it. The targets are small, low-contrast and easily imitated — water stains, oil marks and textureless asphalt all look like the thing you are trying to find — and the whole model has to fit an automotive edge SoC."
+built: "A segmentation model targeted at safety-critical small road elements, hardened against the specific false positives that dominate in the field, then compressed and quantized to INT8 for the TDA4 toolchain."
+result: "Reached the initial mass-production quality bar for the feature while running inside the TDA4 inference budget — accuracy and latency taken to release together rather than in sequence."
+my_role: "Perception model optimisation engineer: model architecture and training for the small-target segmentation, and the compression and INT8 quantization path to TDA4."
 privacy_note: "Only high-level model and deployment information is shown. Internal datasets, exact metrics, customer-specific calibration data, and vehicle-integration details are omitted."
 ---
 <div class="lawn-modules">

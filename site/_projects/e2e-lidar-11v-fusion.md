@@ -13,13 +13,22 @@ cover_type: "video"
 featured: false
 order: 100
 rich_body: true
-summary: "An end-to-end autonomous-driving system that fuses 11 surround cameras (7 pinhole + 4 fisheye) with LiDAR under a sparse-centric (SparseDrive-style) paradigm. My two core deliverables: a fused BEV-fusion CUDA operator that aligns 11-camera and LiDAR features in a single kernel, and the training of an AI planner that outputs motion and planning in parallel from a shared query decoder."
+summary: "An end-to-end driving system fusing 11 surround cameras and LiDAR under a sparse-centric paradigm. I owned two pieces: a fused CUDA aggregation operator, and the AI planner that emits motion and planning in parallel."
+problem: "Fusing 11 cameras and a LiDAR through a dense BEV grid means paying for every cell of a mostly-empty scene, on every frame. A sparse-centric design avoids that, but only if the aggregation step is fast enough to be worth it."
+built: "A fused CUDA operator that performs deformable aggregation across all 11 camera views and the LiDAR voxels in a single kernel instead of a chain of gathers, and an AI planner trained to emit motion prediction and planning in parallel from one shared query decoder."
+result: "The stack stays sparse from sensor to trajectory — nothing is ever rasterised into a dense grid — and planning shares the decoder with prediction rather than consuming its output through a second interface."
+my_role: "I owned the fused BEV-fusion CUDA operator and the AI-planner training. The surrounding sparse perception stack was the collaboration's shared work."
 privacy_note: "Only high-level architecture and sanitized visual materials are shown. Customer-specific data, calibration, and internal performance numbers are omitted. The original source listed an inconsistent interval; a neutral '2024 · Collaboration' label is shown instead."
 atlas:
   eyebrow: "Logic map"
   title: "11V LiDAR to trajectory"
-  caption: "Hover a node to inspect the sparse data path. Green and amber mark my owned modules."
+  caption: "A sparse-centric path: nothing is ever rasterised into a dense BEV grid. Green marks the two modules I owned — the fused CUDA aggregation operator and the AI planner."
   cols: 6
+  legend:
+    - { accent: cyan, label: "Sensing & perception" }
+    - { accent: blue, label: "Encoding & decoding" }
+    - { accent: purple, label: "Queries & fusion" }
+    - { accent: green, label: "Modules I owned" }
   nodes:
     - id: sensors
       col: 2
@@ -117,7 +126,7 @@ atlas:
       span: 2
       row: 4
       kind: contribution
-      accent: warn
+      accent: green
       tag: "Owned"
       title: "AI Planner"
       desc: "Parallel heads trained"
@@ -144,11 +153,11 @@ atlas:
     - { from: sensors, to: encoders, kind: flow }
     - { from: encoders, to: queries, kind: flow }
     - { from: encoders, to: cuda, kind: flow }
-    - { from: queries, to: cuda, kind: solid }
+    - { from: queries, to: cuda, kind: cond }
     - { from: cuda, to: bev, kind: flow }
     - { from: bev, to: perception, kind: flow }
-    - { from: perception, to: decoder, kind: solid }
-    - { from: bev, to: decoder, kind: dashed }
+    - { from: perception, to: decoder, kind: cond }
+    - { from: bev, to: decoder, kind: cond }
     - { from: decoder, to: planner, kind: flow }
     - { from: planner, to: trajectory, kind: flow }
 ---

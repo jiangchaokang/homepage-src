@@ -13,13 +13,22 @@ cover_type: "video"
 featured: true
 order: 80
 rich_body: true
-summary: "A two-phase journey in autonomous-driving auto-labeling: first a Tesla-AI-Day-inspired vision-only 4D auto-labeling pipeline with Hozon Auto and SJTU IRMV, then a multi-modal 4D auto-labeling and production pure-LiDAR 3D detection system at PhiGent Robotics — optimized at the data, model, and loss levels."
+summary: "Two eras of autonomous-driving auto-labeling: a vision-only 4D pipeline built with Hozon Auto and SJTU IRMV, then a multi-modal 4D auto-labeler and a production pure-LiDAR 3D detector at PhiGent Robotics."
+problem: "3D annotation is the largest recurring cost in an autonomous-driving programme, and human labellers are the bottleneck on how fast a perception model can improve. The goal in both eras was the same: high-quality 4D labels with no human in the loop."
+built: "First a vision-only pipeline in the Tesla AI Day spirit — surround depth into pseudo-LiDAR, static and dynamic reconstruction fused into a 4D scene. Then a multi-modal camera-plus-LiDAR auto-labeler hardened on the cases that actually break labelling (vulnerable road users, long range, articulated trailers), and a pure-LiDAR 3D detector taken to production, optimised at the data, model and loss levels."
+result: "The vision-only era proved out the 4D reconstruction approach and fed its lessons into the multi-modal one, which shipped: an auto-labeler in the annotation loop and a production pure-LiDAR detector on a mass-production platform."
+my_role: "Perception team leader for the auto-labeling effort and 3D perception algorithm engineer on the LiDAR detector — architecture, the failure-case hardening programme, and the production optimisation."
 privacy_note: "Only public-level pipeline structure is shown. Internal datasets, labeling rules, exact metrics, model parameters, and customer-specific details are omitted; thresholds are illustrative."
 atlas:
   eyebrow: "Logic map"
   title: "One goal, two eras — vision-only 4D, then multi-modal + pure LiDAR"
-  caption: "Both lanes chase the same prize: high-quality 4D labels with no human in the loop. Hover a node to compare the eras."
+  caption: "Both columns chase the same prize: high-quality 4D labels with no human in the loop. The left column is the vision-only era, the right is the multi-modal one that shipped."
   cols: 4
+  legend:
+    - { accent: ink, label: "Shared goal" }
+    - { accent: cyan, label: "Era 1 · vision-only 4D" }
+    - { accent: blue, label: "Era 2 · multi-modal auto-labeling" }
+    - { accent: green, label: "Shipped production model" }
   nodes:
     - id: goal
       col: 1
@@ -119,7 +128,7 @@ atlas:
     - { from: depth, to: fuse4d, kind: flow }
     - { from: multimodal, to: autolabel, kind: flow }
     - { from: autolabel, to: lidardet, kind: flow }
-    - { from: fuse4d, to: autolabel, kind: dashed }
+    - { from: fuse4d, to: autolabel, kind: cond, label: "lessons carried over" }
 ---
 <div class="lawn-modules">
 

@@ -13,13 +13,24 @@ cover_type: "video"
 featured: true
 order: 90
 rich_body: true
-summary: "Built a controllable surround-view driving generator that compresses 3D boxes and maps into spatial conditions, encodes text / reference frames / lanes / camera calibration into condition tokens, and injects them into a UNet diffusion backbone — producing cross-camera-consistent 4V / 7V / 11V images and video for data augmentation and open-loop simulation, evolving from OpenSora 1.0 + SD 3.5 to a MagicDrive-fused in-house model."
+summary: "A controllable surround-view driving generator: 3D boxes and maps become spatial conditions, text / reference frames / lanes / calibration become condition tokens, and a UNet diffusion backbone turns them into cross-camera-consistent 4V / 7V / 11V video."
+problem: "Training data for surround perception is fixed once it is recorded — you cannot re-shoot the same intersection at night, in rain, with a cyclist added. Generated data can, but only if the generator is controllable and the views agree with each other geometrically."
+built: "A conditional surround generator: 3D boxes and map elements are projected per view into spatial conditions, while text, reference frames, lane structure and camera calibration are encoded into condition tokens and injected into a UNet diffusion backbone. The model evolved from OpenSora 1.0 plus SD 3.5 into an in-house model fused with MagicDrive."
+result: "Conditioning every camera on the same projected 3D structure is what keeps 4, 7 or 11 views mutually consistent, so the output is usable both as perception training data and as open-loop simulation rather than as decorative video."
+my_role: "Built the generator: the condition design, the encoders and injection path, and the training and evolution of the in-house model."
 privacy_note: "PhiGent Robotics research. Only sanitized generation results and high-level pipeline descriptions are shown; dataset details and internal evaluation metrics are omitted. The OmniNWM follow-up was led by former colleagues after my departure and is credited below."
 atlas:
   eyebrow: "Logic map"
   title: "Noise to controllable surround worlds"
-  caption: "Hover a node to inspect how structure, tokens, and denoising create geometry-aligned 4V / 7V / 11V output."
+  caption: "Everything on the left is a condition; the diffusion backbone in the middle is the only thing that generates. Geometry stays aligned across 4, 7 or 11 views because every view is conditioned on the same projected 3D structure."
   cols: 6
+  legend:
+    - { accent: ink, label: "Start latent" }
+    - { accent: cyan, label: "Structural conditions" }
+    - { accent: blue, label: "Token conditions & V2 controls" }
+    - { accent: purple, label: "Diffusion backbone" }
+    - { accent: green, label: "Output & downstream use" }
+    - { accent: warn, label: "Model lineage" }
   nodes:
     - id: noise
       col: 2
@@ -179,9 +190,9 @@ atlas:
     - { from: controls, to: unet, kind: flow }
     - { from: unet, to: denoise, kind: flow }
     - { from: denoise, to: decode, kind: flow }
-    - { from: decode, to: augment, kind: solid }
-    - { from: decode, to: simulation, kind: solid }
-    - { from: decode, to: evolution, kind: dashed }
+    - { from: decode, to: augment, kind: cond }
+    - { from: decode, to: simulation, kind: cond }
+    - { from: decode, to: evolution, kind: cond, label: "lessons → next model" }
     - { from: evolution, to: v2, kind: flow }
 ---
 <div class="lawn-modules">

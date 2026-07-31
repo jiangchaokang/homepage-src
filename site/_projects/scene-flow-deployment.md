@@ -13,13 +13,31 @@ cover_type: "video"
 featured: true
 order: 70
 rich_body: true
-summary: "A 3D motion-estimation stack for autonomous driving: an unsupervised auto-labeling system that assigns a 3D scene-flow vector to every LiDAR point and every occupancy cell, validated by lifting the accuracy of existing flow estimators, distilled into an ultra-light production head, and deployed end-to-end through ONNX, TensorRT (Orin) and the Horizon J6E toolchain."
+summary: "An unsupervised 3D scene-flow auto-labeler that assigns a motion vector to every LiDAR point and occupancy cell, distilled into an ultra-light production head and deployed through one ONNX graph to both TensorRT (Orin) and Horizon J6E."
+problem: "Per-point 3D motion cannot be annotated by hand at fleet scale, and the networks that estimate it are far too heavy for an automotive ECU. Both halves have to be solved, or neither is useful."
+built: "An unsupervised label engine that derives dense scene flow from consecutive LiDAR sweeps using geometric, cycle and smoothness constraints — so labels scale with mileage rather than with annotation budget — and an ultra-light head distilled from those labels, exported once to ONNX and compiled for two different silicon tiers."
+result: "The auto-labels raised the accuracy of established flow estimators when used as their training signal, which is the evidence that the labels are right; the distilled head runs on-vehicle on both a high-compute and a cost-optimised target from a single exported graph."
+my_role: "Designed and built the auto-labeling system, the distilled production head, and the ONNX → TensorRT / Horizon deployment path."
+glossary:
+  - term: "Scene flow"
+    def: "A 3D motion vector for every point — the point-level equivalent of optical flow, and what lets a vehicle reason about motion that no object detector has a class for."
+  - term: "Cycle constraint"
+    def: "Flow estimated forward and then backward should return to the starting point; the discrepancy is a supervision signal that needs no labels."
+  - term: "ONNX"
+    def: "A portable model graph format. Exporting once and compiling twice keeps the two deployment targets provably identical to the trained model."
 privacy_note: "Only the general pipeline and deployment concepts are shown. Internal data, exact metrics, model parameters, and hardware-specific optimization details are omitted; any figures are illustrative."
 atlas:
   eyebrow: "Logic map"
   title: "From unsupervised labels to on-vehicle occupancy flow"
-  caption: "One label engine feeds a tiny production head; a single ONNX source fans out to two silicon targets. Hover a node."
+  caption: "One label engine, one exported graph, two silicon targets. The validation branch is evidence, not part of the runtime path — it never ships."
   cols: 4
+  legend:
+    - { accent: ink, label: "Raw sensor input" }
+    - { accent: cyan, label: "Label generation" }
+    - { accent: blue, label: "Validation evidence" }
+    - { accent: purple, label: "Model distillation" }
+    - { accent: warn, label: "Export" }
+    - { accent: green, label: "On-vehicle runtime" }
   nodes:
     - id: sweeps
       col: 1
@@ -40,26 +58,29 @@ atlas:
       row: 2
       kind: process
       accent: cyan
-      tag: "Core IP"
+      core: true
+      tag: "Core"
       title: "Unsupervised Auto-Labeler"
-      desc: "Point- + occ-level flow"
-      receives: "Aligned sweep pairs"
-      logic: "Geometry / cycle / smoothness constraints"
+      desc: "Point- and occupancy-level flow"
+      receives: "Ego-motion-compensated sweep pairs"
+      logic: "Solve for flow under geometric, cycle and smoothness constraints"
       sends: "Dense 3D motion labels"
-      gives: "Labels scale with mileage"
+      why: "Supervision now scales with mileage instead of with annotation budget — which is the only way per-point motion labels exist at fleet scale at all."
+      role: "Designed and built the label engine."
     - id: validate
       col: 1
       span: 2
       row: 3
       kind: reason
       accent: blue
-      tag: "Proof"
+      lane: aux
+      tag: "Evidence"
       title: "Lifts Existing Estimators"
-      desc: "Labels make others better"
-      receives: "Auto-labels → baselines"
-      logic: "Retrain established methods"
+      desc: "The labels make other methods better"
+      receives: "Auto-labels used to retrain published baselines"
+      logic: "Retrain established methods on the generated labels"
       sends: "Consistent accuracy gains"
-      gives: "Evidence the labels are right"
+      why: "An unsupervised labeler cannot be checked against ground truth it does not have. Improving someone else's published model is the strongest available proof that the labels are real."
     - id: head
       col: 3
       span: 2
@@ -126,12 +147,12 @@ atlas:
       sends: "Dense scene-flow field"
       gives: "Production motion estimation"
   edges:
-    - { from: sweeps, to: autolabel, kind: flow }
-    - { from: autolabel, to: validate, kind: solid }
-    - { from: autolabel, to: head, kind: flow }
-    - { from: validate, to: head, kind: dashed }
+    - { from: sweeps, to: autolabel, kind: flow, label: "aligned pairs" }
+    - { from: autolabel, to: validate, kind: train }
+    - { from: autolabel, to: head, kind: train, label: "supervision" }
+    - { from: validate, to: head, kind: train }
     - { from: head, to: export, kind: flow }
-    - { from: export, to: trt, kind: flow }
+    - { from: export, to: trt, kind: flow, label: "one graph" }
     - { from: export, to: horizon, kind: flow }
     - { from: trt, to: onvehicle, kind: flow }
     - { from: horizon, to: onvehicle, kind: flow }

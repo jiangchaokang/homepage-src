@@ -14,13 +14,32 @@ featured: false
 order: 110
 protected: true
 rich_body: true
-summary: "End-to-end production perception on a mid-trim (J6E / J6M) platform, organised around three shipped systems: a multi-task static OneModel that drives every static element from one shared BEV feature, a 4D-sparse dynamic model that unifies detection and tracking, and an on-board latency-compression effort that cut inference from ~42.65 ms to ~13.88 ms. My work spans architecture, a unified data pipeline, heterogeneous multi-task training, release engineering, and quantization-aware deployment."
+summary: "Production perception on a mid-trim J6E / J6M platform: a static OneModel driving every static element from one shared BEV feature, a 4D-sparse model that fuses detection and tracking, and a latency-compression effort that took inference from ~42.65 ms to ~13.88 ms."
+problem: "On a mid-trim platform the compute budget is fixed and small, while the number of things perception has to output keeps growing. Running a separate model per task is affordable on paper and impossible on the ECU."
+built: "Three shipped systems sharing one representation-first design. A multi-task static OneModel reads lanes, curbs, road geometry and topology out of a single shared BEV feature; a 4D-sparse dynamic model fuses detection and tracking into one query pipeline instead of a detector followed by an association stage; and a unified data pipeline feeds all tasks from the same source in one forward pass."
+result: "On-board inference compressed from ~42.65 ms to <strong>~13.88 ms</strong> through anchor reduction, caching, channel pruning and quantization-aware training — with the multi-task stack validated and released for mass production."
+my_role: "Architecture, the unified data pipeline, heterogeneous multi-task training, release engineering, and quantization-aware deployment. The platform integration and validation are shared with the wider perception team."
+glossary:
+  - term: "OneModel"
+    def: "One network with many task heads reading a single shared BEV feature, instead of one model per task — the only way the task list fits the compute budget."
+  - term: "4D sparse"
+    def: "Sparse queries carried through space and time (X, Y, Z, T), so detection and tracking are the same computation rather than two stages."
+  - term: "QAT"
+    def: "Quantization-aware training: the model learns with quantization simulated in the loop, so INT8 deployment does not cost accuracy after the fact."
+  - term: "LSS"
+    def: "Lift-Splat-Shoot. Lifts image features into 3D using predicted depth, then splats them into the BEV grid."
 privacy_note: "Bosch (XC-CN) production project. The architecture and engineering methodology shown here are presented at a technical, portfolio level; customer-specific data, calibration, raw release artefacts, and proprietary training corpora are intentionally omitted or sanitized."
 atlas:
   eyebrow: "Logic map"
   title: "One representation, many production heads"
-  caption: "Hover a node to inspect how static, dynamic, and deployment branches share one representation-first logic."
+  caption: "Two branches, one principle: build the representation once, then decode it many ways. The left column is static perception, the right is dynamic; the dashed links are training-time only, everything solid runs on the vehicle."
   cols: 6
+  legend:
+    - { accent: ink, label: "Platform constraint" }
+    - { accent: cyan, label: "Static representation & data" }
+    - { accent: blue, label: "Static decoding" }
+    - { accent: purple, label: "Dynamic branch" }
+    - { accent: green, label: "Deployment & release" }
   nodes:
     - id: platform
       col: 2
@@ -82,13 +101,15 @@ atlas:
       row: 5
       kind: process
       accent: cyan
+      lane: aux
       tag: "Train"
       title: "Unified Pipeline"
-      desc: "Same source, all tasks"
-      receives: "Regular + badcase data"
-      logic: "Index mapping + round-robin"
+      desc: "Same source, every task"
+      receives: "Regular and badcase data"
+      logic: "Index mapping plus round-robin task sampling"
       sends: "Task-tagged batches"
-      gives: "One forward, many losses"
+      why: "One forward pass carrying many losses is what makes multi-task training affordable; separate loaders per task would multiply both epoch time and drift."
+      role: "Built the unified data pipeline and the heterogeneous multi-task training loop."
     - id: dynamic_query
       col: 4
       span: 3
@@ -138,11 +159,14 @@ atlas:
       accent: green
       tag: "Deploy"
       title: "Latency Compression"
-      desc: "Graph shrink + INT8"
-      receives: "42.65 ms baseline"
-      logic: "Anchors, cache, channels, QAT"
-      sends: "13.88 ms executable"
-      gives: "Real-time on-board inference"
+      desc: "Graph shrink and INT8"
+      spec: "42.65 ms → 13.88 ms"
+      receives: "The 42.65 ms baseline graph"
+      logic: "Anchor reduction, caching, channel pruning, quantization-aware training"
+      sends: "A 13.88 ms executable"
+      why: "Latency is not an optimisation here, it is the admission criterion — above the budget the model does not ship at any accuracy."
+      tradeoff: "Every one of the four levers costs a little accuracy; quantization-aware training is what keeps the total loss inside the release bar."
+      role: "Owned the latency-compression effort and quantization-aware deployment."
     - id: release
       col: 2
       span: 4
@@ -159,17 +183,17 @@ atlas:
       sends: "Production perception stack"
       gives: "Representation-first mass production"
   edges:
-    - { from: platform, to: static_bev, kind: flow }
-    - { from: static_bev, to: static_heads, kind: flow }
+    - { from: platform, to: static_bev, kind: flow, label: "4V / 5V" }
+    - { from: static_bev, to: static_heads, kind: flow, label: "one shared BEV" }
     - { from: static_heads, to: static_v2, kind: flow }
-    - { from: static_v2, to: data_train, kind: dashed }
-    - { from: data_train, to: static_bev, kind: dashed }
-    - { from: platform, to: dynamic_query, kind: flow }
+    - { from: static_v2, to: data_train, kind: train }
+    - { from: data_train, to: static_bev, kind: train, label: "task-tagged batches" }
+    - { from: platform, to: dynamic_query, kind: flow, label: "7V (+ LiDAR)" }
     - { from: dynamic_query, to: dynamic_decode, kind: flow }
     - { from: dynamic_decode, to: dynamic_track, kind: flow }
     - { from: dynamic_track, to: compression, kind: flow }
-    - { from: data_train, to: release, kind: solid }
-    - { from: compression, to: release, kind: flow }
+    - { from: data_train, to: release, kind: cond }
+    - { from: compression, to: release, kind: flow, label: "13.88 ms" }
 ---
 <div class="lawn-modules">
 
