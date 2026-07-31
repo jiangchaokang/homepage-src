@@ -388,17 +388,22 @@
     // adjacency: id -> { edges:[idx], up:[id], down:[id] }
     const adj = {};
     nodes.forEach((n) => { adj[n.id] = { edges: [], up: [], down: [] }; });
+    // One vocabulary for every map: flow = inference data flow, cond = conditioning /
+    // structural link, train = train-time only, grad = gradient, loop = closed loop.
+    // `solid` / `dashed` are kept as legacy aliases so older maps keep rendering.
+    const KIND_ALIAS = { solid: "cond", dashed: "train" };
     const edgeObjs = edges
       .map((e, i) => {
         const from = e.from || e[0];
         const to = e.to || e[1];
-        const kind = e.kind || e[2] || "flow";
+        const raw = e.kind || e[2] || "flow";
+        const kind = KIND_ALIAS[raw] || raw;
         if (!adj[from] || !adj[to]) return null;
         adj[from].edges.push(i);
         adj[to].edges.push(i);
         adj[from].down.push(to);
         adj[to].up.push(from);
-        return { from, to, kind, path: null, head: null };
+        return { from, to, kind, label: e.label || "", path: null, head: null, text: null };
       })
       .filter(Boolean);
 
@@ -413,7 +418,21 @@
       svg.appendChild(h);
       e.path = p;
       e.head = h;
+      if (e.label) {
+        const t = document.createElementNS(NS, "text");
+        t.setAttribute("class", "edge-label kind-" + e.kind);
+        t.setAttribute("text-anchor", "middle");
+        t.setAttribute("dominant-baseline", "middle");
+        t.setAttribute("paint-order", "stroke");
+        t.textContent = e.label;
+        svg.appendChild(t);
+        e.text = t;
+      }
     });
+
+    // Reserve a left rail whenever the map draws a loop / gradient edge, so the
+    // bow has somewhere to go instead of cutting through the first column.
+    if (edgeObjs.some((e) => e.kind === "loop" || e.kind === "grad")) atlas.classList.add("has-rail");
 
     const measure = (el) => ({
       cx: el.offsetLeft + el.offsetWidth / 2, cy: el.offsetTop + el.offsetHeight / 2,
@@ -454,11 +473,18 @@
         const a = measure(ae), b = measure(be);
         // Loop-back edge: bow out to the left margin so the closed loop reads clearly,
         // kept clear of the training-weight line that rises on the right.
-        if (e.kind === "loop") {
+        // Loop / gradient edge: bow out into the left rail so the closed loop reads
+        // clearly and never cuts across a node. The rail is reserved by `has-rail`.
+        if (e.kind === "loop" || e.kind === "grad") {
           const x1 = a.left, y1 = a.cy, x2 = b.left, y2 = b.cy;
-          const cx = Math.min(x1, x2) - Math.max(46, (a.bottom - a.top) * 0.7);
+          const near = Math.min(x1, x2);
+          const cx = near - Math.min(Math.max(near - 6, 8), Math.max(30, (a.bottom - a.top) * 0.55));
           e.path.setAttribute("d", `M ${x1} ${y1} C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`);
           e.head.setAttribute("d", arrow(x2, y2, Math.atan2(0, x2 - cx)));
+          if (e.text) {
+            e.text.setAttribute("x", ((x1 + 3 * cx + 3 * cx + x2) / 8).toFixed(1));
+            e.text.setAttribute("y", ((y1 + y2) / 2).toFixed(1));
+          }
           return;
         }
         const dx = b.cx - a.cx, dy = b.cy - a.cy;
@@ -480,6 +506,10 @@
         }
         e.path.setAttribute("d", `M ${x1} ${y1} C ${c1x} ${c1y} ${c2x} ${c2y} ${x2} ${y2}`);
         e.head.setAttribute("d", arrow(x2, y2, Math.atan2(y2 - c2y, x2 - c2x)));
+        if (e.text) {
+          e.text.setAttribute("x", ((x1 + 3 * c1x + 3 * c2x + x2) / 8).toFixed(1));
+          e.text.setAttribute("y", ((y1 + 3 * c1y + 3 * c2y + y2) / 8).toFixed(1));
+        }
       });
     };
 
@@ -489,23 +519,35 @@
     const setPanel = (n) => {
       if (!panel) return;
       const set = (sel, val) => { const el = qs(sel, panel); if (el) el.textContent = val || "—"; };
+      const row = (sel, val) => {
+        const el = qs(sel, panel);
+        if (el) el.hidden = !val;
+        return val;
+      };
       const css = "var(" + (accentVar[n.accent] || "--at-cyan") + ")";
       const dot = qs("[data-ap-dot]", panel);
       if (dot) { dot.style.background = css; dot.style.boxShadow = "0 0 10px " + css; }
-      set("[data-ap-tag]", (n.tag || "Module").toUpperCase());
+
+      const lane = n.lane || "main";
+      const laneSuffix = lane === "aux" ? " · TRAIN-ONLY" : lane === "prior" ? " · FROZEN" : "";
+      set("[data-ap-tag]", (n.tag || "Module").toUpperCase() + laneSuffix);
       set("[data-ap-title]", n.title);
       set("[data-ap-receives]", n.receives);
       set("[data-ap-logic]", n.logic);
       set("[data-ap-sends]", n.sends);
-      set("[data-ap-gives]", n.gives);
 
-      const rel = qs("[data-ap-rel]", panel);
-      const up = qs("[data-ap-up]", panel), down = qs("[data-ap-down]", panel);
-      const names = (ids) => ids.map((id) => (nodeById[id] || {}).title || id).join(", ");
-      let any = false;
-      if (up) { const u = adj[n.id].up; up.hidden = !u.length; if (u.length) { qs("span", up).textContent = names(u); any = true; } }
-      if (down) { const d = adj[n.id].down; down.hidden = !d.length; if (d.length) { qs("span", down).textContent = names(d); any = true; } }
-      if (rel) rel.hidden = !any;
+      // "Why this design" carries the judgement; `gives` is the legacy field name.
+      const why = n.why || n.gives;
+      if (row("[data-ap-why-row]", why)) set("[data-ap-why]", why);
+      if (row("[data-ap-trade-row]", n.tradeoff)) set("[data-ap-tradeoff]", n.tradeoff);
+      if (row("[data-ap-role-row]", n.role)) set("[data-ap-role]", n.role);
+
+      const hint = qs("[data-ap-hint]", panel);
+      if (hint) hint.hidden = true;
+      const io = qs("[data-ap-io]", panel);
+      if (io) io.hidden = false;
+      const copy = qs("[data-ap-copy]", panel);
+      if (copy) { copy.hidden = false; copy.dataset.nodeId = n.id; }
 
       const note = qs("[data-ap-note]", panel);
       if (note) {
@@ -527,52 +569,86 @@
       }
     };
 
-    const focusNode = (id) => {
-      const n = nodeById[id];
-      if (!n) return;
-      grid.classList.add("has-dim");
-      svg.classList.add("has-dim");
+    const nodeEls = qsa(".atlas-node", grid);
+    let pinnedId = null;
+
+    const paint = (id) => {
       const lit = new Set([id]);
-      // light connected edges + neighbours
       edgeObjs.forEach((e) => {
         const on = e.from === id || e.to === id;
         e.path.classList.toggle("is-lit", on);
         e.head.classList.toggle("is-lit", on);
+        if (e.text) e.text.classList.toggle("is-lit", on);
         if (on) { lit.add(e.from); lit.add(e.to); }
       });
-      qsa(".atlas-node", grid).forEach((el) => {
+      grid.classList.add("has-dim");
+      svg.classList.add("has-dim");
+      nodeEls.forEach((el) => {
         const on = lit.has(el.dataset.node);
         el.classList.toggle("is-lit", on);
         el.classList.toggle("is-active", el.dataset.node === id);
+        el.setAttribute("aria-expanded", String(el.dataset.node === id));
       });
+    };
+
+    const focusNode = (id) => {
+      const n = nodeById[id];
+      if (!n) return;
+      atlas.classList.remove("is-idle");
+      paint(id);
       setPanel(n);
     };
 
     const clearFocus = () => {
       grid.classList.remove("has-dim");
       svg.classList.remove("has-dim");
-      edgeObjs.forEach((e) => { e.path.classList.remove("is-lit"); e.head.classList.remove("is-lit"); });
-      qsa(".atlas-node", grid).forEach((el) => el.classList.remove("is-lit", "is-active"));
+      edgeObjs.forEach((e) => {
+        e.path.classList.remove("is-lit");
+        e.head.classList.remove("is-lit");
+        if (e.text) e.text.classList.remove("is-lit");
+      });
+      nodeEls.forEach((el) => {
+        el.classList.remove("is-lit", "is-active");
+        el.setAttribute("aria-expanded", "false");
+      });
     };
 
-    // tour
+    // Hover previews; a click (or Enter/Space on the button) pins the node so the
+    // panel survives pointer-out — which is the only workable model on touch.
+    const preview = (id) => { if (!pinnedId) focusNode(id); };
+    const restore = () => { if (pinnedId) focusNode(pinnedId); else clearFocus(); };
+    const pin = (id) => {
+      pinnedId = pinnedId === id ? null : id;
+      atlas.classList.toggle("is-pinned", !!pinnedId);
+      if (pinnedId) focusNode(pinnedId); else clearFocus();
+    };
+
+    // tour — two steps on first view, then it gets out of the way
     const tourWrap = qs("[data-atlas-tour]", atlas);
     const tourBtn = qs("[data-atlas-toggle]", atlas);
     const statusEl = qs("[data-atlas-status]", atlas);
-    let touring = false, tourIdx = -1, tourTimer = null, started = false;
+    let touring = false, tourIdx = -1, tourTimer = null, started = false, tourBudget = Infinity;
 
-    const tourStep = () => { tourIdx = (tourIdx + 1) % nodes.length; focusNode(nodes[tourIdx].id); };
-    const startTour = () => {
+    const stopTour = () => {
+      touring = false; atlas.classList.remove("is-touring");
+      if (statusEl) statusEl.innerHTML = "Auto&nbsp;tour";
+      window.clearInterval(tourTimer);
+    };
+    const tourStep = () => {
+      if (tourBudget <= 0) { stopTour(); return; }
+      tourBudget -= 1;
+      tourIdx = (tourIdx + 1) % nodes.length;
+      focusNode(nodes[tourIdx].id);
+    };
+    const startTour = (steps) => {
       if (touring || reduceMotion) return;
+      pinnedId = null;
+      atlas.classList.remove("is-pinned");
+      tourBudget = steps || Infinity;
       touring = true; atlas.classList.add("is-touring");
       if (statusEl) statusEl.textContent = "Touring";
       tourStep();
       tourTimer = window.setInterval(tourStep, 2300);
-    };
-    const stopTour = () => {
-      touring = false; atlas.classList.remove("is-touring");
-      if (statusEl) statusEl.innerHTML = "Auto&nbsp;Tour";
-      window.clearInterval(tourTimer);
     };
 
     if (tourWrap && !reduceMotion) {
@@ -580,15 +656,31 @@
       if (tourBtn) tourBtn.addEventListener("click", () => { if (touring) { stopTour(); clearFocus(); } else startTour(); });
     }
 
-    // interactions pause the tour
-    const userInterrupt = () => { if (touring) { stopTour(); } };
+    const userInterrupt = () => { if (touring) stopTour(); };
 
-    qsa(".atlas-node", grid).forEach((el) => {
-      el.addEventListener("pointerenter", () => { userInterrupt(); focusNode(el.dataset.node); });
-      el.addEventListener("focus", () => { userInterrupt(); focusNode(el.dataset.node); });
-      el.addEventListener("click", () => { userInterrupt(); focusNode(el.dataset.node); });
+    nodeEls.forEach((el) => {
+      el.addEventListener("pointerenter", () => { userInterrupt(); preview(el.dataset.node); });
+      el.addEventListener("focus", () => { userInterrupt(); preview(el.dataset.node); });
+      el.addEventListener("blur", restore);
+      el.addEventListener("click", () => { userInterrupt(); pin(el.dataset.node); });
     });
-    stage.addEventListener("pointerleave", () => { if (!touring) clearFocus(); });
+    stage.addEventListener("pointerleave", () => { if (!touring) restore(); });
+    atlas.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && pinnedId) { pinnedId = null; atlas.classList.remove("is-pinned"); clearFocus(); }
+    });
+
+    // Copy a deep link to the focused node — the cheapest way for someone else to
+    // reference one specific stage of the map.
+    const copyBtn = qs("[data-ap-copy]", atlas);
+    if (copyBtn) {
+      copyBtn.addEventListener("click", () => {
+        const id = copyBtn.dataset.nodeId;
+        if (!id) return;
+        const href = location.origin + location.pathname + "#" + atlas.id + "--" + id;
+        const done = () => { copyBtn.classList.add("is-done"); window.setTimeout(() => copyBtn.classList.remove("is-done"), 1400); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(href).then(done, () => {});
+      });
+    }
 
     // subtle parallax
     const scene = qs("[data-atlas-scene]", atlas) || grid;
@@ -619,13 +711,92 @@
       window.addEventListener("resize", redraw);
     }
 
-    // auto-start the tour once, shortly after the atlas enters the viewport
-    if (!reduceMotion && "IntersectionObserver" in window) {
+    /* ---- Export the map as a standalone SVG (no dependencies) ---- */
+    const exportBtn = qs("[data-atlas-export]", atlas);
+    if (exportBtn && "Blob" in window && "URL" in window) {
+      exportBtn.hidden = false;
+      const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const wrap = (text, perLine) => {
+        const words = String(text).split(/\s+/);
+        const lines = []; let line = "";
+        words.forEach((w) => {
+          if (!line.length) line = w;
+          else if ((line + " " + w).length <= perLine) line += " " + w;
+          else { lines.push(line); line = w; }
+        });
+        if (line) lines.push(line);
+        return lines;
+      };
+      exportBtn.addEventListener("click", () => {
+        const W = grid.offsetWidth, H = grid.offsetHeight;
+        if (!W || !H) return;
+        const pad = 28, footer = 34;
+        const parts = [];
+        parts.push(`<rect x="0" y="0" width="${W + pad * 2}" height="${H + pad * 2 + footer}" fill="#07090f"/>`);
+        parts.push(`<g transform="translate(${pad},${pad})">`);
+        edgeObjs.forEach((e) => {
+          const d = e.path.getAttribute("d");
+          if (!d) return;
+          const dash = e.kind === "train" ? ' stroke-dasharray="2 6"' : e.kind === "flow" ? ' stroke-dasharray="5 9"' : "";
+          const col = e.kind === "grad" || e.kind === "loop" ? "#38e1ef" : "rgba(150,180,255,0.45)";
+          parts.push(`<path d="${d}" fill="none" stroke="${col}" stroke-width="1.6"${dash}/>`);
+          parts.push(`<path d="${e.head.getAttribute("d") || ""}" fill="${col}"/>`);
+          if (e.text) parts.push(`<text x="${e.text.getAttribute("x")}" y="${e.text.getAttribute("y")}" fill="#9aa6bd" font-size="10" font-family="ui-sans-serif,system-ui,sans-serif" text-anchor="middle">${esc(e.label)}</text>`);
+        });
+        nodeEls.forEach((el) => {
+          const n = nodeById[el.dataset.node] || {};
+          const x = el.offsetLeft, y = el.offsetTop, w = el.offsetWidth, h = el.offsetHeight;
+          const accent = (getComputedStyle(el).getPropertyValue("--nc") || "#38e1ef").trim();
+          const lane = n.lane || "main";
+          const dash = lane === "main" ? "" : ' stroke-dasharray="4 4"';
+          parts.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="14" fill="rgba(255,255,255,0.05)" stroke="${accent}" stroke-opacity="0.55" stroke-width="1.2"${dash}/>`);
+          let ty = y + 20;
+          if (n.tag) { parts.push(`<text x="${x + 14}" y="${ty}" fill="${accent}" font-size="9" letter-spacing="1.2" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">${esc(String(n.tag).toUpperCase())}</text>`); ty += 16; }
+          wrap(n.title || "", Math.max(12, Math.floor(w / 8))).forEach((ln) => {
+            parts.push(`<text x="${x + 14}" y="${ty}" fill="#ffffff" font-size="13" font-family="ui-sans-serif,system-ui,sans-serif" font-weight="700">${esc(ln)}</text>`);
+            ty += 16;
+          });
+          if (n.desc) wrap(n.desc, Math.max(16, Math.floor(w / 6))).forEach((ln) => {
+            parts.push(`<text x="${x + 14}" y="${ty}" fill="#9aa6bd" font-size="10.5" font-family="ui-sans-serif,system-ui,sans-serif">${esc(ln)}</text>`);
+            ty += 13;
+          });
+        });
+        parts.push("</g>");
+        parts.push(`<text x="${pad}" y="${H + pad + 24}" fill="#6c7791" font-size="11" font-family="ui-sans-serif,system-ui,sans-serif">${esc((data.title || "Logic map") + " — jiangchaokang.github.io")}</text>`);
+        const svgText = `<svg xmlns="http://www.w3.org/2000/svg" width="${W + pad * 2}" height="${H + pad * 2 + footer}" viewBox="0 0 ${W + pad * 2} ${H + pad * 2 + footer}">${parts.join("")}</svg>`;
+        const url = URL.createObjectURL(new Blob([svgText], { type: "image/svg+xml" }));
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = (data.title || "logic-map").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".svg";
+        document.body.appendChild(a); a.click(); a.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      });
+    }
+
+    // Deep link: /projects/x/#<atlas-id>--<node-id> opens straight onto that node.
+    const openFromHash = () => {
+      const hash = decodeURIComponent(location.hash || "").slice(1);
+      const prefix = atlas.id + "--";
+      if (!hash.startsWith(prefix)) return false;
+      const id = hash.slice(prefix.length);
+      if (!nodeById[id]) return false;
+      stopTour();
+      pinnedId = id;
+      atlas.classList.add("is-pinned");
+      focusNode(id);
+      return true;
+    };
+    window.addEventListener("hashchange", openFromHash);
+
+    // First view: play two tour steps so it is obvious the map is interactive,
+    // then hand control back to the reader.
+    if (!openFromHash() && "IntersectionObserver" in window) {
+      atlas.classList.add("is-idle");
       const io = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting && !started) {
             started = true;
-            window.setTimeout(() => { if (!touring) startTour(); }, 2600);
+            if (!reduceMotion) window.setTimeout(() => { if (!touring && !pinnedId) startTour(2); }, 1400);
             io.disconnect();
           }
         });
