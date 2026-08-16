@@ -12,7 +12,7 @@ cover: "/assets/media/projects/gen_ad_sim/ingolstadt_gen_video_grid.mp4"
 cover_type: "video"
 featured: true
 order: 140
-protected: true
+protected: false
 rich_body: true
 summary: "A generative simulation platform built on Cosmos-Transfer2.5: a 7-camera surround world model, real-map scenario generation, and a 4-step distilled sampler that makes surround rollouts fast enough to sit inside a closed loop."
 problem: "Real driving logs cannot cover the rare interactions that matter most, and collecting them is slow, expensive and unsafe. Generated video could fill the gap — but a 35-step surround-video diffusion model is far too slow to sit inside a closed simulation loop."
