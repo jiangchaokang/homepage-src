@@ -362,29 +362,17 @@
     Array.from(group.children).forEach((child, i) => child.style.setProperty("--i", i));
   });
 
-  const revealItems = qsa(".reveal, .reveal-stagger");
-  const reveal = (item) => item.classList.add("is-visible");
-  
   if (!reduceMotion && "IntersectionObserver" in window) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-  
-          reveal(entry.target);
+          entry.target.classList.add("is-visible");
           observer.unobserve(entry.target);
         });
       },
-      {
-        rootMargin: "0px 0px -8% 0px",
-        threshold: 0
-      }
+      { rootMargin: "0px 0px -8% 0px", threshold: 0 }
     );
-  
-    revealItems.forEach((item) => observer.observe(item));
-  } else {
-    revealItems.forEach(reveal);
-  }
 
     qsa(".reveal, .reveal-stagger").forEach((item) => observer.observe(item));
   } else {
