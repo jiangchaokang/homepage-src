@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 880 550" width="880" height="550" role="img" aria-label="Four nested layers of agent engineering: Prompt inside Context inside Harness inside Loop">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0c1326"/>
+      <stop offset="1" stop-color="#0a0f1f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.7">
+      <stop offset="0" stop-color="#1b2a4a" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#0a0f1f" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+    <path id="looppath" fill="none" d="M104,60 H776 A44,44 0 0 1 820,104 V446 A44,44 0 0 1 776,490 H104 A44,44 0 0 1 60,446 V104 A44,44 0 0 1 104,60 Z"/>
+    <style>
+      .lab{font-family:'SF Pro Display','Segoe UI',Inter,system-ui,sans-serif;font-weight:700;letter-spacing:.18em}
+      .k{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-weight:600}
+      .ring{fill:none;stroke-width:2}
+      @keyframes breathe{0%,100%{opacity:.4}50%{opacity:1}}
+      .l4{animation:breathe 6s ease-in-out infinite}
+      .l3{animation:breathe 6s ease-in-out infinite 1.5s}
+      .l2{animation:breathe 6s ease-in-out infinite 3s}
+      .l1{animation:breathe 6s ease-in-out infinite 4.5s}
+      @media (prefers-reduced-motion:reduce){.l1,.l2,.l3,.l4{animation:none;opacity:.9}}
+    </style>
+  </defs>
+
+  <rect width="880" height="550" fill="url(#bg)"/>
+  <rect width="880" height="550" fill="url(#glow)"/>
+
+  <!-- 04 Loop -->
+  <rect class="ring l4" x="60" y="60" width="760" height="430" rx="44" stroke="#34d399"/>
+  <rect x="60" y="60" width="760" height="430" rx="44" fill="#34d399" opacity="0.04"/>
+  <text class="lab" x="440" y="92" text-anchor="middle" font-size="16" fill="#34d399">04 · LOOP</text>
+  <text class="k" x="440" y="476" text-anchor="middle" font-size="12.5" fill="#34d399" opacity="0.85">closed-loop control</text>
+
+  <!-- 03 Harness -->
+  <rect class="ring l3" x="144" y="118" width="592" height="314" rx="38" stroke="#a78bfa"/>
+  <rect x="144" y="118" width="592" height="314" rx="38" fill="#a78bfa" opacity="0.045"/>
+  <text class="lab" x="440" y="148" text-anchor="middle" font-size="15" fill="#a78bfa">03 · HARNESS</text>
+
+  <!-- 02 Context -->
+  <rect class="ring l2" x="228" y="176" width="424" height="198" rx="32" stroke="#60a5fa"/>
+  <rect x="228" y="176" width="424" height="198" rx="32" fill="#60a5fa" opacity="0.05"/>
+  <text class="lab" x="440" y="204" text-anchor="middle" font-size="14" fill="#60a5fa">02 · CONTEXT</text>
+
+  <!-- 01 Prompt (core) -->
+  <rect class="ring l1" x="312" y="234" width="256" height="82" rx="24" stroke="#22d3ee"/>
+  <rect x="312" y="234" width="256" height="82" rx="24" fill="#22d3ee" opacity="0.07"/>
+  <text class="lab" x="440" y="280" text-anchor="middle" font-size="15" fill="#22d3ee">01 · PROMPT</text>
+  <text class="k" x="440" y="300" text-anchor="middle" font-size="10.5" fill="#7fd6e6" opacity="0.8">intent · core</text>
+
+  <!-- agent node orbiting the loop -->
+  <g>
+    <animateMotion dur="9s" repeatCount="indefinite" rotate="auto">
+      <mpath xlink:href="#looppath"/>
+    </animateMotion>
+    <circle r="13" fill="#34d399" opacity="0.4" filter="url(#soft)"/>
+    <circle r="5.5" fill="#eafff5"/>
+    <circle r="5.5" fill="none" stroke="#34d399" stroke-width="2"/>
+  </g>
+
+  <text class="k" x="440" y="524" text-anchor="middle" font-size="11" fill="#64748b">prompt &#8594; context &#8594; harness &#8594; loop</text>
+</svg>

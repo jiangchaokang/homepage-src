@@ -1,0 +1,9 @@
+---
+layout: null
+---
+{% capture json_items %}
+{% for pub in site.data.publications %},{"type":"Publication","title":{{ pub.title | jsonify }},"url":{{ "/publications/#" | append: pub.id | relative_url | jsonify }},"summary":{{ pub.summary | jsonify }},"meta":{{ pub.venue_short | append: " · " | append: pub.year | jsonify }},"tags":{{ pub.tags | join: " " | jsonify }}}{% endfor %}
+{% for project in site.projects %},{"type":"Project","title":{{ project.title | jsonify }},"url":{{ project.url | relative_url | jsonify }},"summary":{{ project.summary | jsonify }},"meta":{{ project.date_range | jsonify }},"tags":{{ project.tags | join: " " | jsonify }}}{% endfor %}
+{% for post in site.posts %},{"type":"Blog","title":{{ post.title | jsonify }},"url":{{ post.url | relative_url | jsonify }},"summary":{{ post.description | jsonify }},"meta":{{ post.date | date: "%b %Y" | jsonify }},"tags":{{ post.tags | join: " " | jsonify }}}{% endfor %}
+{% endcapture %}
+[{{ json_items | strip | remove_first: "," }}]

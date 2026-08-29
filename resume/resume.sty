@@ -1,0 +1,172 @@
+% ============================ resume.sty ============================
+% 中英文通用个人简历样式宏包  ——  用 XeLaTeX 编译
+% 设计系统：所有版式参数集中于此，改一处即全局生效（AI/人工编辑友好）。
+% 详见 AGENTS.md 的编辑规范。
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{resume}[2025/01/01 Resume Style]
+
+% ---------- 页面边距：四边对称，便于细边框等距 ----------
+\newcommand{\PageMargin}{1.5cm}
+\RequirePackage{geometry}
+\geometry{a4paper, margin=\PageMargin}
+
+% ---------- 中文支持：fandol 字体，离线零依赖 ----------
+\RequirePackage[fontset=fandol]{ctex}
+
+% ---------- 依赖宏包 ----------
+\RequirePackage{fontawesome5}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\RequirePackage{tabularx}
+\RequirePackage{array}
+\RequirePackage{enumitem}
+\RequirePackage{graphicx}
+\RequirePackage{hyperref}
+
+% ====================== 设计令牌（Design Tokens）======================
+% 仅两种颜色：主色（深海军蓝）+ 正文近黑；分隔线为主色的浅色调。
+\definecolor{themeblue}{RGB}{34,54,86}    % 主色：标题/图标/边框/链接
+\definecolor{ruleblue}{RGB}{120,140,170}  % 分隔线：比主色浅一档
+\definecolor{bodyblack}{RGB}{34,34,34}    % 正文近黑
+
+% 统一的垂直间距节奏（全文复用，勿在正文里手写 vspace）
+\newcommand{\SecBeforeSkip}{10pt}  % 区块标题前
+\newcommand{\SecAfterSkip}{3.5pt}  % 标题分隔线后（正文前）
+\newcommand{\TitleRuleGap}{2pt}    % 标题文字与分隔线间（紧贴蓝线）
+\newcommand{\BlockSkip}{7pt}       % 同级区块（项目）之间
+\newcommand{\ProjGap}{3pt}         % 项目标题与其条目正文间
+
+% 关键尺寸
+\newcommand{\NameZihao}{\zihao{4}} % 姓名字号（较旧版更小）
+\newcommand{\RuleWeight}{0.8pt}    % 所有分隔线统一粗细
+\newcommand{\BorderWeight}{0.6pt}  % 页面细边框粗细
+\newcommand{\BorderInset}{0.6cm}   % 边框到纸张边缘（四边相等）
+\newcommand{\NameGap}{7pt}         % 姓名行与信息行间距
+\newcommand{\ProjIndent}{1.4em}    % 项目正文相对项目标题缩进一档
+\newlength{\DateColW}\setlength{\DateColW}{8.4em}  % entry 日期列宽
+\newcommand{\PhotoHeight}{2.97cm}  % 证件照高度（标准比例由图片自身决定；底边贴教育蓝线）
+\newlength{\PhotoColW}\setlength{\PhotoColW}{2.45cm}
+\newlength{\IconColW}\setlength{\IconColW}{0.82cm}
+\newcommand{\IconSep}{0.28em}      % 图标与标题间距
+
+% ---------- 颜色生效 + 超链接（统一：上色、无下划线）----------
+\hypersetup{colorlinks=true, urlcolor=themeblue, linkcolor=themeblue,
+            citecolor=themeblue, pdfborderstyle={/S/U/W 0}}
+\color{bodyblack}
+
+% ====================== 全局排版 ======================
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\linespread{1.2}
+\setlength{\emergencystretch}{1em}   % 长行优雅折行，避免溢出页边
+
+% ---------- 列表样式：层级统一、缩进规整 ----------
+% itemize（学术成果）：一级项目符号用主色圆点。
+\setlist[itemize]{leftmargin=1.4em, itemsep=5.5pt, topsep=3pt, parsep=0pt,
+                  label=\textcolor{themeblue}{\small$\bullet$}}
+% enumerate（备用）：明显比项目标题缩进一档，编号左对齐。
+\setlist[enumerate]{leftmargin=2.0em, itemsep=5.5pt, topsep=3pt, parsep=0pt,
+                    labelsep=0.5em, label=\textcolor{themeblue}{\arabic*.}}
+
+% ====================== 可复用命令 ======================
+% “至”范围符号
+\newcommand{\dto}{\,$\sim$\,}
+
+% 文字超链接（无图标项用，如个人主页/Google Scholar）：上色、无下划线
+\newcommand{\tlink}[2]{\href{#1}{#2}}
+% 正文色超链接：保持正文近黑（不改颜色），用于给论文名加可点击链接而不破坏清爽版式
+\newcommand{\blink}[2]{\begingroup\hypersetup{urlcolor=bodyblack}\href{#1}{#2}\endgroup}
+% GitHub 图标即超链接（正文链接的主要形式）
+\newcommand{\ghlink}[1]{\href{#1}{\faGithub}}
+% 地球图标即超链接（项目条目链接到对应作品网页）
+\newcommand{\weblink}[1]{\href{#1}{\faGlobe}}
+% 通用图标超链接
+\newcommand{\iconlink}[2]{\href{#1}{#2}}
+
+% 个人信息单元：主色图标 + 文本（电话/邮箱/生日/期望职位浓缩为一行）
+\newcommand{\infoitem}[2]{\textcolor{themeblue}{#1}\,#2}
+
+% 项目内行内编号标记：主色加粗序号（流式连排，替代占空间的 enumerate）
+\newcommand{\pn}[1]{\textcolor{themeblue}{\textbf{#1)}}\,}
+% 项目正文：相对项目标题缩进一档的两端对齐流式段落
+\newcommand{\projbody}[1]{%
+  \par\vspace{\ProjGap}%
+  {\leftskip\ProjIndent\rightskip0pt\noindent #1\par}}
+
+% 定宽中文标签：\cnlabel[宽]{标签}
+% CJK 分散对齐到固定宽度（默认 4em），使其后的冒号纵向对齐；
+% 仅在盒内把 CJK 间胶设为可拉伸，正文不受影响。
+\newcommand{\cnlabel}[2][4em]{%
+  \makebox[#1][s]{\xeCJKsetup{CJKglue={\hskip0pt plus1fil}}#2}}
+% 定宽西文标签：\enlabel[宽]{标签}（左对齐，冒号随后→冒号纵向对齐）
+\newcommand{\enlabel}[2][5.4em]{\makebox[#1][l]{#2}}
+
+% 单行条目：\entry{日期}{正文}{右侧}
+% 定宽日期列 + 右侧信息 \hfill 右对齐，统一教育/工作单行排版。
+\newcommand{\entry}[3]{%
+  \noindent\makebox[\DateColW][l]{#1}#2\hfill #3\par}
+
+% 工作经历专用四列条目：\workentry{日期}{职位}{单位}{地点}
+% 定宽日期列 → 职位（\hfill 撑开）→ 定宽单位列（左对齐，使各行“工作单位”左缘纵向对齐）
+% → 定宽地点列（右对齐，右缘贴版心）。取代此前用空格/\quad 手工对齐的做法。
+\newlength{\WorkOrgW}\setlength{\WorkOrgW}{5.3cm}   % 工作单位列宽（含中英文名）
+\newlength{\WorkLocW}\setlength{\WorkLocW}{1.9cm}   % 工作地点列宽
+\newcommand{\workentry}[4]{%
+  \noindent\makebox[\DateColW][l]{#1}%
+  #2\hfill
+  \makebox[\WorkOrgW][l]{#3}%
+  \makebox[\WorkLocW][r]{#4}\par}
+
+% 章节标题：\cvsection{图标}{标题}
+% 圆形图标与标题在同一中线对齐，下方满宽分隔线紧贴标题文字（nointerlineskip 消除基线间距）。
+\newcommand{\cvsection}[2]{%
+  \par\addvspace{\SecBeforeSkip}\noindent
+  \begin{minipage}[c]{\IconColW}\centering
+    \tikz\node[circle, draw=themeblue, line width=0.8pt,
+          minimum size=0.66cm, inner sep=0pt]
+          {\textcolor{themeblue}{\zihao{-4}#1}};%
+  \end{minipage}\hspace{\IconSep}%
+  \begin{minipage}[c]{\dimexpr\linewidth-\IconColW-\IconSep\relax}
+    {\zihao{-4}\bfseries\color{themeblue}#2\par}%
+    \nointerlineskip\vskip\TitleRuleGap
+    {\color{ruleblue}\rule{\linewidth}{\RuleWeight}}%
+  \end{minipage}\par\addvspace{\SecAfterSkip}%
+}
+
+% 项目标题：\project{标题}{右侧(公司·日期)}
+\newcommand{\project}[2]{%
+  \par\addvspace{\BlockSkip}\noindent
+  {\bfseries\color{themeblue}$\bullet$\,#1}\hfill{\small\color{themeblue}#2}\par}
+
+% 证件照：极细边框，无圆角/阴影，标准比例。
+\newcommand{\photoframe}[1]{%
+  \setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.5pt}%
+  \fcolorbox{ruleblue}{white}{\includegraphics[height=\PhotoHeight]{#1}}}
+
+% 照片占位框（无图片时）
+\newcommand{\photoplaceholder}[1]{%
+  \begin{tikzpicture}
+    \draw[ruleblue, line width=0.5pt] (0,0) rectangle (2.35,\PhotoHeight);
+    \node[gray] at (1.175,0.5\PhotoHeight) {#1};
+  \end{tikzpicture}}
+
+% 顶部证件照：作为右上角悬浮层放置，右边缘对齐正文右边距、顶边对齐姓名行，
+% 不占据垂直文本流 → 让左侧信息与“教育背景”紧凑上移，照片底边贴近教育分隔线。
+\newcommand{\headerphoto}[1]{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[anchor=north east, inner sep=0]
+      at ([xshift=-\PageMargin, yshift=-\PageMargin]current page.north east)
+      {\IfFileExists{#1}{\photoframe{#1}}{\photoplaceholder{照片}}};
+  \end{tikzpicture}%
+}
+
+% ---------- 页面装饰：单一细边框，四边等距，无竖条/横条 ----------
+\newcommand{\pagedecoration}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \draw[themeblue, line width=\BorderWeight]
+      ([xshift=\BorderInset, yshift=-\BorderInset]current page.north west)
+      rectangle
+      ([xshift=-\BorderInset, yshift=\BorderInset]current page.south east);
+  \end{tikzpicture}%
+}

@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080a11" />
+      <stop offset="50%" stop-color="#0d1322" />
+      <stop offset="100%" stop-color="#06080e" />
+    </linearGradient>
+    <linearGradient id="g-flow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <linearGradient id="g-diff" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#818cf8" />
+      <stop offset="100%" stop-color="#c084fc" />
+    </linearGradient>
+    <linearGradient id="g-rl" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <radialGradient id="glow-cyan" cx="25%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="rgba(56, 189, 248, 0.15)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+    </radialGradient>
+    <radialGradient id="glow-purple" cx="75%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="rgba(192, 132, 252, 0.15)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+    </radialGradient>
+    <radialGradient id="glow-green" cx="50%" cy="75%" r="45%">
+      <stop offset="0%" stop-color="rgba(52, 211, 153, 0.12)" />
+      <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.035)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bg)" />
+  <rect width="1200" height="675" fill="url(#grid)" />
+  <rect width="1200" height="675" fill="url(#glow-cyan)" />
+  <rect width="1200" height="675" fill="url(#glow-purple)" />
+  <rect width="1200" height="675" fill="url(#glow-green)" />
+
+  <!-- Flow Matching: Straight vector field rays on Left -->
+  <g opacity="0.35" stroke="#38bdf8" stroke-width="1.5">
+    <line x1="80" y1="200" x2="280" y2="200" marker-end="url(#arrow)" />
+    <line x1="90" y1="240" x2="310" y2="240" />
+    <line x1="80" y1="280" x2="330" y2="280" />
+    <line x1="90" y1="320" x2="310" y2="320" />
+    <line x1="80" y1="360" x2="280" y2="360" />
+    <path d="M 120 180 Q 200 240 320 200" stroke="#818cf8" fill="none" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M 120 380 Q 200 320 320 360" stroke="#818cf8" fill="none" stroke-width="2" stroke-dasharray="4 4"/>
+  </g>
+
+  <!-- Diffusion SDE: Brownian / Langevin stochastic curves on Center-Right -->
+  <g opacity="0.35" stroke="#c084fc" stroke-width="1.5" fill="none">
+    <path d="M 880 200 C 940 160, 980 260, 1060 220 C 1100 200, 1120 280, 1160 240" />
+    <path d="M 880 260 C 920 320, 990 220, 1050 300 C 1100 340, 1130 270, 1160 310" />
+    <path d="M 880 320 C 940 360, 980 280, 1060 340 C 1110 380, 1130 330, 1160 360" />
+    <circle cx="880" cy="260" r="4" fill="#c084fc" />
+    <circle cx="1060" cy="300" r="3" fill="#818cf8" />
+    <circle cx="1160" cy="310" r="4" fill="#38bdf8" />
+  </g>
+
+  <!-- RL Closed loop feedback arc at bottom -->
+  <g opacity="0.3" stroke="#34d399" stroke-width="1.8" fill="none">
+    <path d="M 380 520 C 450 580, 750 580, 820 520" stroke-dasharray="6 6"/>
+    <circle cx="380" cy="520" r="5" fill="#34d399" />
+    <circle cx="820" cy="520" r="5" fill="#34d399" />
+  </g>
+
+  <!-- Top Pill Badge -->
+  <g transform="translate(600, 150)">
+    <rect x="-175" y="-18" width="350" height="36" rx="18" fill="rgba(56, 189, 248, 0.12)" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.2" />
+    <text text-anchor="middle" y="5" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" letter-spacing="1.5">
+      FOUNDATION NOTES · 3 MODULES
+    </text>
+  </g>
+
+  <!-- Main Title -->
+  <text text-anchor="middle" x="600" y="240" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="46" font-weight="800" letter-spacing="-0.5">
+    Generative Models &amp; Reinforcement Learning
+  </text>
+
+  <!-- Subtitle -->
+  <text text-anchor="middle" x="600" y="295" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="400">
+    Continuous Flow Matching · Diffusion &amp; SDE · Policy Optimization &amp; Alignment
+  </text>
+
+  <!-- Three Topic Cards -->
+  <g transform="translate(240, 370)">
+    <rect x="-140" y="0" width="280" height="90" rx="12" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(56, 189, 248, 0.3)" stroke-width="1" />
+    <text text-anchor="middle" x="0" y="32" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1">PART 01 · ODE</text>
+    <text text-anchor="middle" x="0" y="60" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="600">Flow Matching &amp; CNF</text>
+  </g>
+
+  <g transform="translate(600, 370)">
+    <rect x="-140" y="0" width="280" height="90" rx="12" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(192, 132, 252, 0.3)" stroke-width="1" />
+    <text text-anchor="middle" x="0" y="32" fill="#c084fc" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1">PART 02 · SDE / SCORE</text>
+    <text text-anchor="middle" x="0" y="60" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="600">Diffusion &amp; Score SDE</text>
+  </g>
+
+  <g transform="translate(960, 370)">
+    <rect x="-140" y="0" width="280" height="90" rx="12" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(52, 211, 153, 0.3)" stroke-width="1" />
+    <text text-anchor="middle" x="0" y="32" fill="#34d399" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" letter-spacing="1">PART 03 · RL / ALIGNMENT</text>
+    <text text-anchor="middle" x="0" y="60" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="600">Policy Gradient to PPO</text>
+  </g>
+
+  <!-- Footer Tagline -->
+  <text text-anchor="middle" x="600" y="550" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="500">
+    Mathematical Derivations · Algorithmic Evolution · Code Implementations
+  </text>
+</svg>

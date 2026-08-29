@@ -1,0 +1,326 @@
+- id: "jiang2026vectorworld"
+  selected: true
+  title: "VectorWorld: Efficient Streaming World Model via Diffusion Flow on Vector Graphs"
+  authors: "Chaokang Jiang, Desen Zhou, Jiuming Liu, Kevin Li Sun"
+  venue: "ICML Spotlight / arXiv preprint arXiv:2603.17652"
+  venue_short: "ICML"
+  year: 2026
+  status: "Accepted · Spotlight"
+  media: "/assets/media/papers/VectorWorld.gif"
+  tags: ["world-model", "generative", "e2e"]
+  institutions: ["Bosch China", "Research Collaboration"]
+  summary: "Rolling a driving world model forward on dense BEV rasters is expensive, which is what keeps world models out of streaming use."
+  contribution: "It runs the diffusion flow over a compact vector graph of agents and lanes instead of a dense raster, so rollout cost scales with the number of scene elements rather than with resolution — cheap enough to generate the future as a stream."
+  links:
+    - label: "Project Page"
+      url: "https://jiangchaokang.github.io/VectorWorld/"
+      external: true
+    - label: "PDF"
+      url: "https://arxiv.org/pdf/2603.17652"
+      external: true
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2603.17652"
+      external: true
+    - label: "Code"
+      url: "https://github.com/jiangchaokang/VectorWorld"
+      external: true
+
+- id: "liu2026regformerpp"
+  selected: true
+  title: "RegFormer++: An Efficient Large-Scale 3D LiDAR Point Registration Network with Projection-Aware 2D Transformer"
+  authors: "Jiuming Liu, Guangming Wang, Zhe Liu, Chaokang Jiang, Haoang Li, Mengmeng Liu, Tianchen Deng, Marc Pollefeys, Michael Ying Yang, Hesheng Wang"
+  venue: "arXiv preprint arXiv:2603.14290"
+  venue_short: "arXiv"
+  year: 2026
+  status: "Preprint"
+  media: "/assets/media/papers/paper_06_regformer.gif"
+  tags: ["lidar-odometry", "perception"]
+  institutions: ["Research Collaboration"]
+  summary: "Large-scale LiDAR registration is dominated by the cost of attention over hundreds of thousands of unordered points."
+  contribution: "It keeps the registration in 3D but moves the attention onto a range projection, so a 2D transformer carries the heavy computation while the point geometry stays exact — no voxel downsampling, no hand-built descriptors."
+  links:
+    - label: "PDF"
+      url: "https://arxiv.org/pdf/2603.14290"
+      external: true
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2603.14290"
+      external: true
+    - label: "DOI"
+      url: "https://doi.org/10.48550/arXiv.2603.14290"
+      external: true
+
+- id: "liu2026difflow3d"
+  selected: true
+  title: "DifFlow3D: Hierarchical Diffusion Models for Uncertainty-Aware 3D Scene Flow Estimation"
+  authors: "Jiuming Liu, Weicai Ye, Guangming Wang, Chaokang Jiang, Lei Pan, Jinru Han, Zhe Liu, Guofeng Zhang, Hesheng Wang"
+  venue: "IEEE Transactions on Pattern Analysis and Machine Intelligence"
+  venue_short: "T-PAMI"
+  year: 2026
+  status: "Published"
+  media: "/assets/media/papers/paper_02_difflow3d.gif"
+  tags: ["scene-flow", "generative", "perception"]
+  institutions: ["Research Collaboration"]
+  summary: "Scene-flow networks return one motion vector per point and no indication of when that vector should not be trusted."
+  contribution: "It refines flow as a hierarchical, coarse-to-fine diffusion process and reads per-point uncertainty directly out of that process — the journal extension of the CVPR 2024 method."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/TPAMI.2025.3629570"
+      external: true
+
+- id: "wang2025unsupervised"
+  selected: false
+  title: "Unsupervised Learning of 3D Scene Flow With LiDAR Odometry Assistance"
+  authors: "Guangming Wang, Zhiheng Feng, Chaokang Jiang, Jiuming Liu, Hesheng Wang"
+  venue: "IEEE Transactions on Intelligent Transportation Systems"
+  venue_short: "TITS"
+  year: 2025
+  status: "Published"
+  media: "/assets/media/papers/paper_09_psfnet.gif"
+  tags: ["scene-flow", "lidar-odometry", "perception"]
+  institutions: ["SJTU IRMV", "Research Collaboration"]
+  summary: "Point-level motion labels for LiDAR barely exist, so supervised scene flow does not scale beyond curated datasets."
+  contribution: "It supervises scene flow with LiDAR odometry instead of annotations: ego-motion already explains the rigid part of the observed flow, leaving the network to learn only the part that genuinely moves."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/TITS.2025.3538765"
+      external: true
+
+- id: "liu2025mamba4d"
+  selected: true
+  title: "Mamba4D: Efficient 4D Point Cloud Video Understanding with Disentangled Spatial-Temporal State Space Models"
+  authors: "Jiuming Liu, Jinru Han, Lihao Liu, Angelica I. Avilés-Rivero, Chaokang Jiang, Zhe Liu, Hesheng Wang"
+  venue: "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition"
+  venue_short: "CVPR"
+  year: 2025
+  status: "Published"
+  media: "/assets/media/papers/paper_04_mamba4d.gif"
+  tags: ["perception", "3d-4d"]
+  institutions: ["Research Collaboration"]
+  summary: "Attention over a 4D point-cloud video costs quadratically in sequence length, which caps how much history a model can afford to look at."
+  contribution: "It splits the spatial and temporal axes into separate state-space models, so long point-cloud videos are processed in linear time and longer histories become affordable."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/CVPR52734.2025.01642"
+      external: true
+
+- id: "wang2025gmfdrive"
+  selected: false
+  title: "GMF-Drive: Gated Mamba Fusion with Spatial-Aware BEV Representation for End-to-End Autonomous Driving"
+  authors: "Jian Wang, Chaokang Jiang, Haitao Xu"
+  venue: "arXiv preprint arXiv:2508.06113"
+  venue_short: "arXiv"
+  year: 2025
+  status: "Preprint"
+  media: "/assets/media/papers/GMF-Drive.gif"
+  tags: ["e2e", "perception", "world-model"]
+  institutions: ["Research Collaboration"]
+  summary: "In end-to-end driving stacks, BEV sensor fusion is usually the most expensive block in the network."
+  contribution: "It replaces BEV attention with a gated Mamba fusion that keeps spatial structure explicit, trading quadratic attention for linear sequence modelling at the fusion stage."
+  links:
+    - label: "PDF"
+      url: "https://arxiv.org/pdf/2508.06113"
+      external: true
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2508.06113"
+      external: true
+    - label: "DOI"
+      url: "https://doi.org/10.48550/arXiv.2508.06113"
+      external: true
+
+- id: "zhu2025d2gslam"
+  selected: false
+  title: "D^2GSLAM: 4D Dynamic Gaussian Splatting SLAM"
+  authors: "Siting Zhu, Yuxiang Huang, Wenhua Wu, Chaokang Jiang, Yongbo Chen, I-Ming Chen, Hesheng Wang"
+  venue: "arXiv preprint arXiv:2512.09411"
+  venue_short: "arXiv"
+  year: 2025
+  status: "Preprint"
+  media: "/assets/media/papers/D2GSLAM.gif"
+  tags: ["generative", "perception", "lidar-odometry"]
+  institutions: ["Research Collaboration"]
+  summary: "Gaussian-splatting SLAM assumes a static world, so every moving object is reconstructed as an artefact smeared across the map."
+  contribution: "It gives the map a fourth dimension: dynamic content is carried by time-varying Gaussians, so moving objects are modelled explicitly instead of corrupting the static reconstruction."
+  links:
+    - label: "PDF"
+      url: "https://arxiv.org/pdf/2512.09411"
+      external: true
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2512.09411"
+      external: true
+    - label: "DOI"
+      url: "https://doi.org/10.48550/arXiv.2512.09411"
+      external: true
+
+- id: "liu2024difflow3d"
+  selected: false
+  title: "DifFlow3D: Toward Robust Uncertainty-Aware Scene Flow Estimation with Iterative Diffusion-Based Refinement"
+  authors: "Jiuming Liu, Guangming Wang, Weicai Ye, Chaokang Jiang, Jinru Han, Zhe Liu, Guofeng Zhang, Dalong Du, Hesheng Wang"
+  venue: "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition"
+  venue_short: "CVPR"
+  year: 2024
+  status: "Published"
+  media: "/assets/media/papers/paper_02_difflow3d.gif"
+  tags: ["scene-flow", "generative", "perception"]
+  institutions: ["SJTU IRMV", "Research Collaboration"]
+  summary: "Single-shot scene-flow regression collapses on large or ambiguous motion, and gives no signal about which predictions are unreliable."
+  contribution: "It casts flow refinement as an iterative diffusion conditioned on the previous estimate, which recovers the motions regression averages away and yields a per-point reliability estimate as a by-product."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/CVPR52733.2024.01431"
+      external: true
+
+- id: "jiang20243dsflabelling"
+  selected: true
+  title: "3DSFLabelling: Boosting 3D Scene Flow Estimation by Pseudo Auto-labelling"
+  authors: "Chaokang Jiang, Guangming Wang, Jiuming Liu, Hesheng Wang, Zhuang Ma, Zhenqiang Liu, Zhujin Liang, Yi Shan, Dalong Du"
+  venue: "Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition"
+  venue_short: "CVPR"
+  year: 2024
+  status: "Published"
+  media: "/assets/media/papers/paper_01_3dsf_labelling.gif"
+  tags: ["scene-flow", "perception", "3d-4d"]
+  institutions: ["SJTU IRMV", "PhiGent Robotics", "Research Collaboration"]
+  summary: "Point-level 3D motion is effectively impossible to annotate by hand, so scene-flow models are trained on synthetic data and then meet real LiDAR."
+  contribution: "It manufactures the missing labels from real LiDAR itself — fitting and augmenting per-object rigid motion to produce pseudo ground truth — so training happens on the same sensor and domain that deployment does."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/CVPR52733.2024.01437"
+      external: true
+    - label: "Code"
+      url: "https://github.com/jiangchaokang/3DSFLabelling"
+      external: true
+
+- id: "jiang2024neurogauss4d"
+  selected: true
+  title: "NeuroGauss4D-PCI: 4D Neural Fields and Gaussian Deformation Fields for Point Cloud Interpolation"
+  authors: "Chaokang Jiang, Dalong Du, Jiuming Liu, Siting Zhu, Zhenqiang Liu, Zhuang Ma, Zhujin Liang, Jie Zhou"
+  venue: "Advances in Neural Information Processing Systems"
+  venue_short: "NeurIPS"
+  year: 2024
+  status: "Published"
+  media: "/assets/media/papers/paper_05_neurogauss4d.png"
+  tags: ["generative", "perception", "3d-4d"]
+  institutions: ["Research Collaboration"]
+  summary: "Interpolating between two LiDAR sweeps means inventing the geometry that neither sweep observed."
+  contribution: "It couples a 4D neural field with a Gaussian deformation field, so an intermediate frame is a continuous deformation of the scene rather than a per-point correspondence guess."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.52202/079017-2979"
+      external: true
+    - label: "Code"
+      url: "https://github.com/jiangchaokang/NeuroGauss4D-PCI"
+      external: true
+
+- id: "jiang2023scene"
+  selected: false
+  title: "3-D Scene Flow Estimation on Pseudo-LiDAR: Bridging the Gap on Estimating Point Motion"
+  authors: "Chaokang Jiang, Guangming Wang, Yanzi Miao, Hesheng Wang"
+  venue: "IEEE Transactions on Industrial Informatics"
+  venue_short: "TII"
+  year: 2023
+  status: "Published"
+  media: "/assets/media/papers/paper_07_scene_flow_on_pseudo_point.gif"
+  tags: ["scene-flow", "perception"]
+  institutions: ["CUMT", "SJTU IRMV"]
+  summary: "Scene flow is normally treated as a LiDAR problem, which leaves camera-only platforms with no way to estimate point motion at all."
+  contribution: "It estimates 3D point motion on pseudo-LiDAR lifted from images, and characterises where that lifted geometry helps and where its depth error dominates."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/TII.2022.3210560"
+      external: true
+
+- id: "miao2023pseudo"
+  selected: false
+  title: "Pseudo-LiDAR for Visual Odometry"
+  authors: "Yanzi Miao, Huiying Deng, Chaokang Jiang, Zhiheng Feng, Xinrui Wu, Guangming Wang, Hesheng Wang"
+  venue: "IEEE Transactions on Instrumentation and Measurement"
+  venue_short: "TIM"
+  year: 2023
+  status: "Published"
+  media: "/assets/media/papers/paper_08_vslam_pseudolidar.gif"
+  tags: ["lidar-odometry", "perception"]
+  institutions: ["CUMT", "SJTU IRMV"]
+  summary: "Visual odometry matches features on the image plane, where scale is ambiguous and geometry has to be recovered indirectly."
+  contribution: "It lifts images into pseudo-LiDAR first and estimates pose in metric 3D, so a camera-only system can use a geometric odometry formulation."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/TIM.2023.3315416"
+      external: true
+
+- id: "liu2023translo"
+  selected: false
+  title: "TransLO: A Window-Based Masked Point Transformer Framework for Large-Scale LiDAR Odometry"
+  authors: "Jiuming Liu, Guangming Wang, Chaokang Jiang, Liu Zhe, Hesheng Wang"
+  venue: "Proceedings of the AAAI Conference on Artificial Intelligence"
+  venue_short: "AAAI"
+  year: 2023
+  status: "Published"
+  media: "/assets/media/papers/paper_11_translo.gif"
+  tags: ["lidar-odometry", "perception"]
+  institutions: ["SJTU IRMV", "Research Collaboration"]
+  summary: "Point transformers do not fit a full-size LiDAR scan: global attention over every point is out of reach at scan scale."
+  contribution: "It confines attention to local windows and masks out the empty ones, which is what makes a transformer viable for odometry on complete large-scale scans."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1609/aaai.v37i2.25256"
+      external: true
+
+- id: "liu2023regformer"
+  selected: false
+  title: "RegFormer: An Efficient Projection-Aware Transformer Network for Large-Scale Point Cloud Registration"
+  authors: "Jiuming Liu, Guangming Wang, Zhe Liu, Chaokang Jiang, Marc Pollefeys, Hesheng Wang"
+  venue: "Proceedings of the IEEE/CVF International Conference on Computer Vision"
+  venue_short: "ICCV"
+  year: 2023
+  status: "Published"
+  media: "/assets/media/papers/paper_06_regformer.gif"
+  tags: ["lidar-odometry", "perception"]
+  institutions: ["SJTU IRMV", "Research Collaboration"]
+  summary: "Large-scale registration pipelines lean on hand-designed keypoint detection and descriptors, and inherit their failure modes."
+  contribution: "It runs registration attention on a range-image projection of the scan, removing the keypoint-and-descriptor stage while keeping the correspondence search in 3D."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1109/ICCV51070.2023.00776"
+      external: true
+
+- id: "wang2022sfgan"
+  selected: false
+  title: "SFGAN: Unsupervised Generative Adversarial Learning of 3D Scene Flow from the 3D Scene Self"
+  authors: "Guangming Wang, Chaokang Jiang, Zehang Shen, Yanzi Miao, Hesheng Wang"
+  venue: "Advanced Intelligent Systems"
+  venue_short: "AIS"
+  year: 2022
+  status: "Published"
+  media: "/assets/media/papers/paper_10_sfgan.gif"
+  tags: ["scene-flow", "generative", "perception"]
+  institutions: ["CUMT", "SJTU IRMV"]
+  summary: "Unsupervised scene flow usually falls back on nearest-neighbour losses, which reward motion that merely lands near some point."
+  contribution: "It trains the flow adversarially against the scene's own structure: the supervision is whether the warped point cloud looks like a real scene, not whether points found a neighbour."
+  links:
+    - label: "DOI"
+      url: "https://doi.org/10.1002/aisy.202100197"
+      external: true
+
+- id: "jiang2022ffpanet"
+  selected: false
+  title: "FFPA-Net: Efficient Feature Fusion with Projection Awareness for 3D Object Detection"
+  authors: "Chaokang Jiang, Guangming Wang, Jinxing Wu, Yanzi Miao, Hesheng Wang"
+  venue: "arXiv preprint arXiv:2209.07419"
+  venue_short: "arXiv"
+  year: 2022
+  status: "Preprint"
+  media: "/assets/media/papers/paper_03_icra2023_ffpanet.gif"
+  tags: ["perception"]
+  institutions: ["CUMT", "SJTU IRMV"]
+  summary: "Camera-LiDAR detectors re-project between the two sensors repeatedly, and pay for it on every forward pass."
+  contribution: "It builds the pixel-to-point projection index once and reuses it, turning multi-modal fusion into a lookup rather than a repeated geometric operation."
+  links:
+    - label: "PDF"
+      url: "https://arxiv.org/pdf/2209.07419"
+      external: true
+    - label: "arXiv"
+      url: "https://arxiv.org/abs/2209.07419"
+      external: true
+    - label: "DOI"
+      url: "https://doi.org/10.48550/arXiv.2209.07419"
+      external: true

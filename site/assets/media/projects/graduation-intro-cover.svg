@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19" />
+      <stop offset="50%" stop-color="#111827" />
+      <stop offset="100%" stop-color="#0a0e17" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="rgba(59, 130, 246, 0.18)" />
+      <stop offset="100%" stop-color="rgba(0, 0, 0, 0)" />
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#bg)" />
+  <rect width="1200" height="675" fill="url(#grid)" />
+  <circle cx="600" cy="337" r="450" fill="url(#glow)" />
+
+  <!-- Geometric 3D/4D perception wireframe elements -->
+  <g opacity="0.25" stroke="#38bdf8" stroke-width="1.2" fill="none">
+    <polygon points="600,120 780,220 780,440 600,540 420,440 420,220" />
+    <polygon points="600,160 740,240 740,410 600,490 460,410 460,240" stroke-dasharray="4 4" />
+    <line x1="600" y1="120" x2="600" y2="540" />
+    <line x1="420" y1="220" x2="780" y2="440" />
+    <line x1="420" y1="440" x2="780" y2="220" />
+    <!-- Point cloud dots -->
+    <circle cx="520" cy="280" r="3" fill="#38bdf8" />
+    <circle cx="680" cy="290" r="3" fill="#a855f7" />
+    <circle cx="560" cy="390" r="3" fill="#34d399" />
+    <circle cx="640" cy="380" r="3" fill="#38bdf8" />
+    <circle cx="600" cy="330" r="4" fill="#60a5fa" />
+  </g>
+
+  <!-- Badge -->
+  <g transform="translate(600, 200)">
+    <rect x="-110" y="-18" width="220" height="36" rx="18" fill="rgba(59, 130, 246, 0.15)" stroke="rgba(59, 130, 246, 0.35)" stroke-width="1.5" />
+    <text text-anchor="middle" y="5" fill="#38bdf8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" letter-spacing="1.5">GRADUATION FILM</text>
+  </g>
+
+  <!-- Title -->
+  <text text-anchor="middle" x="600" y="300" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="44" font-weight="700" letter-spacing="-0.5">
+    Master's Research &amp; Journey
+  </text>
+
+  <!-- Subtitle -->
+  <text text-anchor="middle" x="600" y="350" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="20" font-weight="400">
+    3D/4D Perception · Robotics · IRMV Lab (2020–2023)
+  </text>
+
+  <!-- Bilibili Play Action Pill -->
+  <g transform="translate(600, 430)">
+    <rect x="-130" y="-24" width="260" height="48" rx="24" fill="url(#accent)" />
+    <!-- Play triangle -->
+    <polygon points="-12,-8 -12,8 6,0" fill="#ffffff" />
+    <text text-anchor="middle" x="20" y="6" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="15" font-weight="600">
+      Watch on Bilibili
+    </text>
+  </g>
+
+  <!-- Institution Meta -->
+  <text text-anchor="middle" x="600" y="525" fill="#64748b" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="14" font-weight="500" letter-spacing="0.5">
+    China University of Mining and Technology × Shanghai Jiao Tong University
+  </text>
+</svg>

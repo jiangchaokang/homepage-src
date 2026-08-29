@@ -1,0 +1,138 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     viewBox="0 0 640 500" width="640" height="500" role="img" aria-labelledby="t d">
+  <title id="t">Jck</title>
+  <desc id="d">Jck autonomous-driving themed animated logo</desc>
+
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="46%" r="72%">
+      <stop offset="0%" stop-color="#10151b"/>
+      <stop offset="62%" stop-color="#0a0d12"/>
+      <stop offset="100%" stop-color="#05070a"/>
+    </radialGradient>
+    <radialGradient id="coreGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1FA8E8" stop-opacity="0.55"/>
+      <stop offset="60%" stop-color="#1576b8" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#1576b8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="scanGrad" cx="320" cy="250" r="235" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3bc0f5" stop-opacity="0.45"/>
+      <stop offset="70%" stop-color="#3bc0f5" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#3bc0f5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff6b63"/>
+      <stop offset="50%" stop-color="#ED2B36"/>
+      <stop offset="100%" stop-color="#aa0c1b"/>
+    </linearGradient>
+    <linearGradient id="blueGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#74d6ff"/>
+      <stop offset="50%" stop-color="#1FA8E8"/>
+      <stop offset="100%" stop-color="#0a72bd"/>
+    </linearGradient>
+
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowSm" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <path id="redPath"  d="M72,250 A248,116 0 1 1 568,250 A248,116 0 1 1 72,250"/>
+    <path id="bluePath" d="M94,250 A226,104 0 1 0 546,250 A226,104 0 1 0 94,250"/>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="500" fill="url(#bgGrad)"/>
+
+  <!-- Core breathing glow -->
+  <circle cx="320" cy="250" r="120" fill="url(#coreGrad)">
+    <animate attributeName="opacity" values="0.5;0.9;0.5" dur="3.2s" repeatCount="indefinite"/>
+    <animate attributeName="r" values="115;130;115" dur="3.2s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- Radar pulses (environment sensing) -->
+  <g fill="none" stroke="#37b4ee" stroke-width="2">
+    <circle cx="320" cy="250" r="36" opacity="0">
+      <animate attributeName="r" values="36;232" dur="3.6s" begin="0s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="3.6s" begin="0s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="320" cy="250" r="36" opacity="0">
+      <animate attributeName="r" values="36;232" dur="3.6s" begin="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="3.6s" begin="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="320" cy="250" r="36" opacity="0">
+      <animate attributeName="r" values="36;232" dur="3.6s" begin="2.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.55;0" dur="3.6s" begin="2.4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- LiDAR rotating scan sector -->
+  <g opacity="0.6">
+    <path d="M320,250 L555,250 A235,235 0 0 1 471,430 Z" fill="url(#scanGrad)"/>
+    <animateTransform attributeName="transform" type="rotate"
+        from="0 320 250" to="360 320 250" dur="5s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- Tilted orbit system -->
+  <g transform="rotate(-16 320 250)">
+    <!-- Red ring -->
+    <use xlink:href="#redPath" href="#redPath" fill="none" stroke="url(#redGrad)"
+         stroke-width="9" stroke-linecap="round" filter="url(#glow)"
+         stroke-dasharray="1190" stroke-dashoffset="0">
+      <animate attributeName="stroke-dashoffset" values="1190;0" dur="1.7s" begin="0s" fill="freeze"/>
+    </use>
+    <!-- Blue ring -->
+    <use xlink:href="#bluePath" href="#bluePath" fill="none" stroke="url(#blueGrad)"
+         stroke-width="5.5" stroke-linecap="round" filter="url(#glow)"
+         stroke-dasharray="1080" stroke-dashoffset="0">
+      <animate attributeName="stroke-dashoffset" values="1080;1080;0" keyTimes="0;0.12;1" dur="2s" begin="0s" fill="freeze"/>
+    </use>
+
+    <!-- Data nodes (inner-track reverse flow) -->
+    <g>
+      <animate attributeName="opacity" values="0;0;1" keyTimes="0;0.4;1" dur="1.8s" begin="0s" fill="freeze"/>
+      <circle r="4.5" fill="#cdf1ff" filter="url(#glowSm)">
+        <animateMotion dur="6.5s" begin="0s" repeatCount="indefinite">
+          <mpath xlink:href="#bluePath" href="#bluePath"/>
+        </animateMotion>
+      </circle>
+    </g>
+
+    <!-- Self-driving car (cruising the outer track) -->
+    <g>
+      <animate attributeName="opacity" values="0;0;1" keyTimes="0;0.4;1" dur="1.8s" begin="0s" fill="freeze"/>
+      <g>
+        <animateMotion dur="9s" begin="0s" rotate="0" repeatCount="indefinite">
+          <mpath xlink:href="#redPath" href="#redPath"/>
+        </animateMotion>
+        <!-- Car body -->
+        <path d="M-22,5 C-22,0 -21,-3 -15,-4 L-10,-12 C-9,-15 -7,-15 -4,-15 L7,-15
+                 C10,-15 11,-14 12,-12 L17,-4 C21,-3 22,0 22,5 L22,6 C22,8 21,9 19,9
+                 L-19,9 C-21,9 -22,8 -22,6 Z" fill="#86518b"/>
+        <path d="M-9,-13 L-11.5,-5 L-2,-5 L-2,-13 Z" fill="#16242e"/>
+        <path d="M2,-13 L2,-5 L11.3,-5 L9,-13 Z" fill="#16242e"/>
+        <circle cx="-12" cy="8" r="5.5" fill="#0d1c25"/>
+        <circle cx="12"  cy="8" r="5.5" fill="#0d1c25"/>
+        <circle cx="-12" cy="8" r="2.2" fill="#5fb6e0"/>
+        <circle cx="12"  cy="8" r="2.2" fill="#5fb6e0"/>
+        <circle cx="21"  cy="3" r="1.7" fill="#fff3b0"/>
+        <circle cx="-21" cy="3" r="1.5" fill="#ED2B36"/>
+        <!-- Roof LiDAR -->
+        <rect x="-3.5" y="-16.5" width="7" height="4" rx="2" fill="#29c2ff">
+          <animate attributeName="opacity" values="1;0.45;1" dur="1.4s" repeatCount="indefinite"/>
+        </rect>
+      </g>
+    </g>
+  </g>
+
+  <!-- Jck lettermark -->
+  <text x="320" y="296" text-anchor="middle"
+        font-family="'Segoe UI',Arial,Helvetica,sans-serif" font-weight="800"
+        font-size="132" letter-spacing="4" fill="url(#blueGrad)" filter="url(#glow)">
+    Jck
+    <animate attributeName="opacity" values="0;0;1" keyTimes="0;0.45;1" dur="1.8s" begin="0s" fill="freeze"/>
+  </text>
+</svg>
