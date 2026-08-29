@@ -125,9 +125,15 @@ layout: default
   </section>
   {% endif %}
 
-  <section class="section reveal {% unless page.rich_body %}prose{% endunless %}">
-    {{ content }}
-  </section>
+  {% if page.rich_body %}
+    <div class="section project-rich-body">
+      {{ content }}
+    </div>
+  {% else %}
+    <section class="section reveal prose">
+      {{ content }}
+    </section>
+  {% endif %}
 
   {% if page.privacy_note %}
   <section class="section reveal">
