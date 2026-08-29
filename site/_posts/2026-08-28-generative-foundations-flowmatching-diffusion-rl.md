@@ -9,7 +9,7 @@ tags: ["generative", "flow-matching", "diffusion", "rl", "notes"]
 category: generative-models
 cover: "/assets/media/blog/generative_foundations/cover.svg"
 ---
-<article class="bx reveal">
+<article class="bx">
   <header class="bx-hero">
     <div class="bx-hero-inner">
       <p class="eyebrow">基础理论与工程实践 · 生成模型与强化学习</p>
