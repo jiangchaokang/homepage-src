@@ -54,16 +54,16 @@ jobs:
         env:
           JEKYLL_ENV: production
 
-      # - name: Encrypt protected project pages
-      #   run: node tools/encrypt-projects.js
-      - name: Remove all project pages from public site
-        run: |
-          rm -rf _site/projects
-          rm -rf _site/assets/media/projects
-          rm -f _site/projects.html
+      - name: Encrypt protected project pages
+        run: node tools/encrypt-projects.js
+      # - name: Remove all project pages from public site
+      #   run: |
+      #     rm -rf _site/projects
+      #     rm -rf _site/assets/media/projects
+      #     rm -f _site/projects.html
       
-          test ! -e _site/projects
-          test ! -e _site/projects.html
+      #     test ! -e _site/projects
+      #     test ! -e _site/projects.html
         env:
           SITE_PROTECT_PASSWORD: ${{ secrets.SITE_PROTECT_PASSWORD || '5896' }}
 
